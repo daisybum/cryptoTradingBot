@@ -1,0 +1,257 @@
+version: '3.8'
+
+services:
+  # 메인 애플리케이션 (NASOSv5_mod3 Bot)
+  nasos-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nasos-bot:latest
+    container_name: nasos-bot
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - influxdb
+      - redis
+    volumes:
+      - ./config:/app/config
+      - ./logs:/app/logs
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+      - MODE=dryrun
+    env_file:
+      - .env
+    networks:
+      - nasos-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/api/v1/health')"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Freqtrade (전략 엔진)
+  freqtrade:
+    image: freqtradeorg/freqtrade:stable
+    container_name: nasos-freqtrade
+    restart: unless-stopped
+    volumes:
+      - ./config:/freqtrade/config
+      - ./user_data:/freqtrade/user_data
+      - ./logs:/freqtrade/logs
+    command: >
+      trade
+      --logfile /freqtrade/logs/freqtrade.log
+      --db-url postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      --strategy NASOSv5_mod3
+      --strategy-path /freqtrade/user_data/strategies
+      --config /freqtrade/config/freqtrade.json
+    environment:
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    networks:
+      - nasos-network
+    depends_on:
+      - postgres
+    profiles:
+      - freqtrade
+
+  # 위험 관리 서비스
+  risk-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nasos-bot:latest
+    container_name: nasos-risk-manager
+    restart: unless-stopped
+    command: python -m src.risk_manager.service
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - ./config:/app/config
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+      - SERVICE=risk_manager
+    env_file:
+      - .env
+    networks:
+      - nasos-network
+
+  # API 서버
+  api-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nasos-bot:latest
+    container_name: nasos-api-server
+    restart: unless-stopped
+    command: python -m src.api_server.main
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - influxdb
+      - redis
+    volumes:
+      - ./config:/app/config
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+      - SERVICE=api_server
+    env_file:
+      - .env
+    networks:
+      - nasos-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # PostgreSQL 데이터베이스
+  postgres:
+    image: postgres:15-alpine
+    container_name: nasos-postgres
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-nasos_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-nasos_password}
+      - POSTGRES_DB=${POSTGRES_DB:-nasos_bot}
+    networks:
+      - nasos-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-nasos_user} -d ${POSTGRES_DB:-nasos_bot}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # InfluxDB 시계열 데이터베이스
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: nasos-influxdb
+    restart: unless-stopped
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_ADMIN_PASSWORD:-admin_password}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG:-nasos_org}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET:-market_data}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN:-token}
+    networks:
+      - nasos-network
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Redis (캐싱 및 메시징)
+  redis:
+    image: redis:7-alpine
+    container_name: nasos-redis
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - nasos-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Grafana (대시보드)
+  grafana:
+    image: grafana/grafana:10.0.3
+    container_name: nasos-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning
+      - ./config/grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - nasos-network
+    depends_on:
+      - postgres
+      - influxdb
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Hashicorp Vault (보안 비밀 관리)
+  vault:
+    image: hashicorp/vault:1.14
+    container_name: nasos-vault
+    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - vault-data:/vault/data
+      - ./config/vault:/vault/config
+    environment:
+      - VAULT_ADDR=http://0.0.0.0:8200
+      - VAULT_API_ADDR=http://0.0.0.0:8200
+      - VAULT_DEV_ROOT_TOKEN_ID=${VAULT_ROOT_TOKEN:-root}
+    command: server -dev -dev-root-token-id=${VAULT_ROOT_TOKEN:-root}
+    networks:
+      - nasos-network
+    profiles:
+      - vault
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Cloudflare Tunnel (보안 액세스)
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: nasos-cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - nasos-network
+    profiles:
+      - cloudflare
+    depends_on:
+      - grafana
+      - api-server
+
+networks:
+  nasos-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  influxdb-data:
+  redis-data:
+  grafana-data:
+  vault-data:

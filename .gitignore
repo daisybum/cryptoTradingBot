@@ -79,11 +79,11 @@ Thumbs.db
 *.cert
 
 # Freqtrade specific
-user_data/
+# user_data/  # 개발 중에는 주석 처리
 freqtrade-plot.html
 plot/
-config.json
-config.*.json
+# config.json  # 개발 중에는 주석 처리
+# config.*.json  # 개발 중에는 주석 처리
 
 # Hashicorp Vault
 .vault-token

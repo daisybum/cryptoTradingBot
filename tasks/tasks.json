@@ -26,7 +26,7 @@
             1
           ],
           "details": "- Select appropriate base image (Alpine/slim variants preferred)\n- Install required dependencies and packages\n- Configure application user with minimal permissions\n- Set up application directory structure\n- Implement multi-stage build to minimize image size\n- Add health check configuration\n- Document build arguments and environment variables\n\nAcceptance Criteria:\n- Dockerfile builds successfully without errors\n- Container runs with non-root user\n- Image size is optimized (<500MB if possible)\n- All required dependencies are included\n- Security best practices are implemented\n\nEstimated Effort: 4-5 hours",
-          "status": "in-progress"
+          "status": "done"
         },
         {
           "id": 3,
@@ -36,7 +36,7 @@
             2
           ],
           "details": "- Define all required services (app, database, cache, etc.)\n- Configure service dependencies and startup order\n- Set up named volumes for persistent data\n- Create isolated networks for service communication\n- Configure environment variables and secrets handling\n- Add resource constraints for each service\n- Create separate development and production configurations\n\nAcceptance Criteria:\n- All services start correctly with docker-compose up\n- Services can communicate with each other\n- Persistent data is properly stored in volumes\n- Environment-specific configurations work as expected\n- Resource limits are properly defined\n\nEstimated Effort: 5-6 hours",
-          "status": "pending"
+          "status": "in-progress"
         },
         {
           "id": 4,
