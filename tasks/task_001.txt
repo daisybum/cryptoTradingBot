@@ -1,0 +1,131 @@
+# Task ID: 1
+# Title: Project Repository and Docker Setup
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Create the repository structure, Dockerfile, and setup script for the NASOSv5_mod3 trading bot
+# Details:
+1. Initialize Git repository with appropriate .gitignore
+2. Create Dockerfile based on Python 3.11 with necessary dependencies (CCXT, aiohttp, etc.)
+3. Create docker-compose.yml with services for all components (Freqtrade, PostgreSQL, InfluxDB, Grafana, etc.)
+4. Implement setup.sh script that:
+   - Prompts for Binance API keys
+   - Configures Docker environment
+   - Sets up secure storage for API keys using Hashicorp Vault
+   - Initializes database schemas
+   - Provides colored CLI menu for initial configuration
+5. Configure Docker Secrets for sensitive information
+6. Implement Cloudflare Zero-Trust tunnel configuration for dashboard access
+
+# Test Strategy:
+1. Verify Docker builds successfully
+2. Test setup.sh script in clean environment
+3. Validate that API keys are securely stored
+4. Confirm all services start correctly via docker-compose up
+5. Verify network connectivity between containers
+
+# Subtasks:
+## 1. Initialize Git Repository with Project Structure [in-progress]
+### Dependencies: None
+### Description: Create a new Git repository with the initial project structure, including directories for source code, configuration, documentation, and tests. Set up .gitignore and README.md with project overview.
+### Details:
+- Create repository on GitHub/GitLab
+- Initialize local repository with git init
+- Set up folder structure (src/, config/, docs/, tests/)
+- Create comprehensive .gitignore for the project
+- Write initial README.md with project description, setup instructions
+- Add LICENSE file
+- Make initial commit and push to remote
+
+Acceptance Criteria:
+- Repository is accessible with proper permissions
+- Folder structure follows best practices
+- README contains clear setup instructions
+- .gitignore properly excludes sensitive files
+
+Estimated Effort: 2-3 hours
+
+## 2. Create Base Dockerfile for Application [pending]
+### Dependencies: 1.1
+### Description: Develop a Dockerfile that defines the application environment, including all necessary dependencies, runtime configurations, and security hardening measures.
+### Details:
+- Select appropriate base image (Alpine/slim variants preferred)
+- Install required dependencies and packages
+- Configure application user with minimal permissions
+- Set up application directory structure
+- Implement multi-stage build to minimize image size
+- Add health check configuration
+- Document build arguments and environment variables
+
+Acceptance Criteria:
+- Dockerfile builds successfully without errors
+- Container runs with non-root user
+- Image size is optimized (<500MB if possible)
+- All required dependencies are included
+- Security best practices are implemented
+
+Estimated Effort: 4-5 hours
+
+## 3. Configure Docker Compose for Multi-Container Setup [pending]
+### Dependencies: 1.2
+### Description: Create a docker-compose.yml file that defines all services, networks, and volumes required for the application, including development and production configurations.
+### Details:
+- Define all required services (app, database, cache, etc.)
+- Configure service dependencies and startup order
+- Set up named volumes for persistent data
+- Create isolated networks for service communication
+- Configure environment variables and secrets handling
+- Add resource constraints for each service
+- Create separate development and production configurations
+
+Acceptance Criteria:
+- All services start correctly with docker-compose up
+- Services can communicate with each other
+- Persistent data is properly stored in volumes
+- Environment-specific configurations work as expected
+- Resource limits are properly defined
+
+Estimated Effort: 5-6 hours
+
+## 4. Implement Setup Script for Environment Configuration [pending]
+### Dependencies: 1.3
+### Description: Create an interactive setup script that guides users through the initial configuration process, including environment variables, secrets, and service configuration.
+### Details:
+- Write shell script for environment setup
+- Implement interactive prompts for configuration options
+- Add validation for user inputs
+- Generate required configuration files
+- Set up environment variables file (.env)
+- Create backup and restore functionality
+- Add documentation for script usage
+
+Acceptance Criteria:
+- Script runs without errors on target platforms
+- All required configurations are properly set up
+- User inputs are validated and sanitized
+- Script provides clear feedback and instructions
+- Configuration can be backed up and restored
+
+Estimated Effort: 6-8 hours
+
+## 5. Configure Security Services Integration [pending]
+### Dependencies: 1.3, 1.4
+### Description: Set up integration with Hashicorp Vault and Cloudflare for secrets management and secure communication, including authentication and authorization configurations.
+### Details:
+- Configure Hashicorp Vault container or external connection
+- Set up Vault policies and access controls
+- Implement secret rotation mechanism
+- Configure Cloudflare SSL/TLS integration
+- Set up secure API communication
+- Document security architecture and procedures
+- Create security testing scripts
+
+Acceptance Criteria:
+- Vault is properly configured and accessible
+- Secrets are securely stored and retrieved
+- SSL/TLS is properly configured for all services
+- Security documentation is comprehensive
+- Security tests pass successfully
+
+Estimated Effort: 8-10 hours
+

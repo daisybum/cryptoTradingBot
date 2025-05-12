@@ -1,0 +1,241 @@
+# Task ID: 15
+# Title: Deployment and DevOps Pipeline
+# Status: pending
+# Dependencies: 1, 14
+# Priority: high
+# Description: Set up deployment infrastructure and DevOps pipeline for continuous integration and deployment
+# Details:
+1. Create Docker Compose production configuration
+2. Implement blue-green deployment strategy
+3. Set up CI/CD pipeline using GitHub Actions
+4. Configure automated testing in the pipeline
+5. Implement container health checks
+6. Set up monitoring and alerting
+7. Configure backup and disaster recovery
+8. Implement security scanning with Trivy and dependency monitoring with Snyk
+
+Docker Compose production configuration:
+```yaml
+version: '3.8'
+
+services:
+  trading-bot:
+    image: nasos-trading-bot:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - influxdb
+      - redis
+    environment:
+      - POSTGRES_HOST=postgres
+      - INFLUXDB_HOST=influxdb
+      - REDIS_HOST=redis
+      - LOG_LEVEL=info
+    volumes:
+      - ./user_data:/app/user_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=freqtrade
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_DB=freqtrade
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    secrets:
+      - postgres_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U freqtrade"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  influxdb:
+    image: influxdb:2.6-alpine
+    restart: unless-stopped
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=freqtrade
+      - DOCKER_INFLUXDB_INIT_PASSWORD_FILE=/run/secrets/influxdb_password
+      - DOCKER_INFLUXDB_INIT_ORG=trading
+      - DOCKER_INFLUXDB_INIT_BUCKET=market_data
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    secrets:
+      - influxdb_password
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  grafana:
+    image: grafana/grafana:10.0.0
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - influxdb
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD_FILE=/run/secrets/grafana_password
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - "3000:3000"
+    secrets:
+      - grafana_password
+
+  vault:
+    image: hashicorp/vault:1.13
+    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - vault_data:/vault/data
+      - ./vault/config:/vault/config
+    environment:
+      - VAULT_ADDR=http://127.0.0.1:8200
+    command: server -config=/vault/config/vault.hcl
+
+volumes:
+  postgres_data:
+  influxdb_data:
+  redis_data:
+  grafana_data:
+  vault_data:
+
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+  influxdb_password:
+    file: ./secrets/influxdb_password.txt
+  grafana_password:
+    file: ./secrets/grafana_password.txt
+```
+
+GitHub Actions CI/CD pipeline:
+```yaml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+          
+      - name: Run linting
+        run: |
+          flake8 .
+          black --check .
+          
+      - name: Run unit tests
+        run: pytest tests/unit
+        
+      - name: Run integration tests
+        run: pytest tests/integration
+        
+      - name: Security scan with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: nasos-trading-bot:${{ github.sha }}
+          
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Deploy to production
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            cd /opt/trading-bot
+            docker-compose pull
+            docker-compose up -d --no-deps trading-bot
+            docker image prune -f
+```
+
+# Test Strategy:
+1. Test Docker Compose configuration
+2. Verify blue-green deployment process
+3. Test CI/CD pipeline with sample changes
+4. Validate automated testing in the pipeline
+5. Test container health checks
+6. Verify monitoring and alerting functionality
+7. Test backup and recovery procedures
+8. Validate security scanning with Trivy and Snyk

@@ -1,0 +1,89 @@
+# Task ID: 10
+# Title: CLI Menu and User Interface
+# Status: pending
+# Dependencies: 3, 4, 5
+# Priority: medium
+# Description: Implement a rich CLI menu for bot configuration, control, and monitoring
+# Details:
+1. Create a rich CLI interface using Python's rich library
+2. Implement color-coded menu with the following options:
+   - Start/Stop trading
+   - View current status
+   - View recent trades
+   - View performance metrics
+   - Configure parameters
+   - Run backtests
+   - Switch between dry-run and live trading
+3. Implement parameter configuration through YAML files
+4. Add progress bars for long-running operations
+5. Implement logging with different verbosity levels
+
+CLI Menu pseudocode:
+```python
+from rich.console import Console
+from rich.table import Table
+from rich.prompt import Prompt, Confirm
+
+class TradingBotCLI:
+    def __init__(self, bot_controller):
+        self.console = Console()
+        self.bot = bot_controller
+        
+    def display_main_menu(self):
+        self.console.clear()
+        self.console.print("[bold blue]NASOSv5_mod3 Trading Bot[/bold blue]\n")
+        
+        table = Table(show_header=True, header_style="bold magenta")
+        table.add_column("Option", style="dim")
+        table.add_column("Description")
+        
+        table.add_row("1", "Start Trading")
+        table.add_row("2", "Stop Trading")
+        table.add_row("3", "View Status")
+        table.add_row("4", "View Recent Trades")
+        table.add_row("5", "View Performance")
+        table.add_row("6", "Configure Parameters")
+        table.add_row("7", "Run Backtest")
+        table.add_row("8", "Switch Mode (Dry/Live)")
+        table.add_row("q", "Quit")
+        
+        self.console.print(table)
+        
+        choice = Prompt.ask("Enter your choice", choices=["1", "2", "3", "4", "5", "6", "7", "8", "q"])
+        self.handle_choice(choice)
+        
+    def handle_choice(self, choice):
+        if choice == "1":
+            self.start_trading()
+        elif choice == "2":
+            self.stop_trading()
+        elif choice == "3":
+            self.view_status()
+        # Handle other choices
+        elif choice == "q":
+            if Confirm.ask("Are you sure you want to quit?"):
+                self.console.print("[bold red]Exiting...[/bold red]")
+                return False
+        
+        return True
+        
+    def start_trading(self):
+        self.console.print("[bold green]Starting trading bot...[/bold green]")
+        with self.console.status("Starting..."):
+            result = self.bot.start()
+        
+        if result:
+            self.console.print("[bold green]Trading bot started successfully![/bold green]")
+        else:
+            self.console.print("[bold red]Failed to start trading bot![/bold red]")
+        
+        input("Press Enter to continue...")
+```
+
+# Test Strategy:
+1. Test CLI menu navigation
+2. Verify all menu options work correctly
+3. Test parameter configuration through YAML
+4. Validate color coding and formatting
+5. Test progress bars and status indicators
+6. Verify logging at different verbosity levels

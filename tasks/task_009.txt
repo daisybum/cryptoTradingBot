@@ -1,0 +1,76 @@
+# Task ID: 9
+# Title: Grafana Dashboard Implementation
+# Status: pending
+# Dependencies: 6, 7
+# Priority: medium
+# Description: Set up Grafana dashboards for monitoring trading performance, equity curve, and risk metrics
+# Details:
+1. Install and configure Grafana 10
+2. Set up data sources:
+   - PostgreSQL for trade data and performance metrics
+   - InfluxDB for OHLCV data
+3. Create dashboards for:
+   - Portfolio Overview (balance, equity curve, exposure)
+   - Performance Metrics (win rate, profit factor, Sharpe, Calmar)
+   - Risk Monitoring (drawdown, volatility)
+   - Trade Analysis (pairs, timeframes, win/loss distribution)
+4. Implement alerts for critical thresholds
+5. Configure user authentication
+6. Set up automatic dashboard refresh
+
+Grafana Dashboard Configuration:
+```json
+{
+  "dashboard": {
+    "id": null,
+    "title": "NASOSv5_mod3 Trading Performance",
+    "tags": ["trading", "crypto"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "Equity Curve",
+        "type": "graph",
+        "datasource": "PostgreSQL",
+        "targets": [
+          {
+            "rawSql": "SELECT ts as time, balance_usdt FROM equity_curve ORDER BY ts",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisLabel": "USDT",
+              "lineInterpolation": "linear"
+            }
+          }
+        }
+      },
+      {
+        "title": "Drawdown",
+        "type": "graph",
+        "datasource": "PostgreSQL",
+        "targets": [
+          {
+            "rawSql": "WITH max_balance AS (SELECT MAX(balance_usdt) OVER (ORDER BY ts ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as peak, balance_usdt, ts FROM equity_curve) SELECT ts as time, (1 - balance_usdt/peak) * 100 as drawdown FROM max_balance ORDER BY ts",
+            "refId": "A"
+          }
+        ]
+      }
+      // Additional panels would be defined here
+    ],
+    "refresh": "1m"
+  }
+}
+```
+
+# Test Strategy:
+1. Verify Grafana installation and configuration
+2. Test data source connections
+3. Validate dashboard visualizations
+4. Test alert functionality
+5. Verify dashboard refresh works correctly
+6. Test user authentication and access control

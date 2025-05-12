@@ -1,0 +1,50 @@
+# Task ID: 4
+# Title: Trade Execution Engine
+# Status: pending
+# Dependencies: 3
+# Priority: high
+# Description: Implement the execution engine that places and manages orders on Binance
+# Details:
+1. Configure Freqtrade's Binance connector for trade execution
+2. Implement safety check to execute real orders only when `dry_run_wallet` ≥ 0.0001 BTC
+3. Set up primary order type as Limit with market order fallback for volatility spikes
+4. Implement real-time fill tracking via WebSocket
+5. Create trade data model and database schema
+6. Set up order execution queue with prioritization
+7. Implement error handling for failed orders
+
+Execution Engine pseudocode:
+```python
+class ExecutionEngine:
+    def __init__(self, exchange_config, risk_manager):
+        self.exchange = Exchange(**exchange_config)
+        self.risk_manager = risk_manager
+        self.order_queue = asyncio.Queue()
+        
+    async def place_order(self, pair, side, amount, price=None, order_type='limit'):
+        # Check risk limits before placing order
+        if not self.risk_manager.check_trade_allowed(pair, side, amount):
+            return None
+            
+        # Safety check
+        if self.exchange.get_dry_run_wallet() < 0.0001 and not self.is_dry_run:
+            logger.warning("Wallet balance too low for real orders")
+            return None
+            
+        # Place order with fallback to market if needed
+        try:
+            order = await self.exchange.create_order(pair, order_type, side, amount, price)
+            return order
+        except VolatilityException:
+            if order_type == 'limit':
+                return await self.place_order(pair, side, amount, None, 'market')
+            raise
+```
+
+# Test Strategy:
+1. Test order placement with Binance testnet
+2. Verify safety checks prevent unwanted trades
+3. Test limit order placement and market order fallback
+4. Validate order fills are correctly tracked
+5. Test error handling and retry logic
+6. Verify trade data is correctly stored in PostgreSQL

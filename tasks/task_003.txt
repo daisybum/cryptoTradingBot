@@ -1,0 +1,47 @@
+# Task ID: 3
+# Title: NASOSv5_mod3 Strategy Implementation
+# Status: pending
+# Dependencies: 2
+# Priority: high
+# Description: Port and implement the NASOSv5_mod3 trading strategy as a Freqtrade plugin
+# Details:
+1. Create `user_data/strategies/NASOSv5_mod3.py` Freqtrade strategy file
+2. Implement the strategy logic with RSI, EWO, EMA, and SMA indicators
+3. Create default parameter configuration in `params/default.yml`
+4. Implement buy signal logic based on RSI_fast + SMA offset conditions
+5. Implement sell signal logic with stop-loss at 3.5%
+6. Configure timeframe settings (primary: 5m, informative: 15m/1h)
+7. Set up RISK_FIXED stake mode with 2% risk per coin per trade
+8. Implement daily trade limit of 60 transactions
+
+Strategy pseudocode:
+```python
+class NASOSv5_mod3(IStrategy):
+    timeframe = '5m'
+    minimal_roi = {"0": 0.05}
+    stoploss = -0.035
+    
+    def populate_indicators(self, dataframe, metadata):
+        # Calculate RSI, EWO, EMA, SMA indicators
+        dataframe['rsi_fast'] = ta.RSI(dataframe, timeperiod=11)
+        dataframe['ewo'] = EWO(dataframe)
+        # Add other indicators
+        return dataframe
+    
+    def populate_buy_trend(self, dataframe, metadata):
+        # Implement buy conditions based on RSI_fast + SMA offset
+        # Filter with EWO, EMA, MA_offset
+        return dataframe
+    
+    def populate_sell_trend(self, dataframe, metadata):
+        # Implement sell conditions
+        return dataframe
+```
+
+# Test Strategy:
+1. Backtest the strategy against historical data
+2. Verify strategy produces expected signals
+3. Compare backtest results with claimed performance (37,270% profit, ~11% max drawdown, Sharpe ~2.1)
+4. Test with different parameter sets
+5. Validate risk management settings
+6. Perform walk-forward testing to check for overfitting

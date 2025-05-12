@@ -1,0 +1,84 @@
+# Task ID: 8
+# Title: Telegram Integration for Alerts and Commands
+# Status: pending
+# Dependencies: 5
+# Priority: medium
+# Description: Implement Telegram bot for trade alerts, risk notifications, and remote commands
+# Details:
+1. Create Telegram bot using Python-Telegram-Bot library
+2. Implement handlers for commands:
+   - /status - Get current bot status
+   - /balance - Get current balance
+   - /trades - Get recent trades
+   - /risk off - Disable trading temporarily
+   - /risk on - Enable trading
+3. Set up real-time alerts for:
+   - Trade fills (entry/exit)
+   - Error conditions
+   - Risk events (drawdown > 10%)
+   - Daily performance summary
+4. Implement secure authentication for commands
+5. Create message formatting for different alert types
+
+Telegram Bot pseudocode:
+```python
+class TelegramBot:
+    def __init__(self, token, chat_id, risk_manager, execution_engine):
+        self.updater = Updater(token=token)
+        self.dispatcher = self.updater.dispatcher
+        self.chat_id = chat_id
+        self.risk_manager = risk_manager
+        self.execution_engine = execution_engine
+        
+        # Register command handlers
+        self.dispatcher.add_handler(CommandHandler("status", self.status_command))
+        self.dispatcher.add_handler(CommandHandler("balance", self.balance_command))
+        self.dispatcher.add_handler(CommandHandler("trades", self.trades_command))
+        self.dispatcher.add_handler(CommandHandler("risk", self.risk_command))
+        
+        # Subscribe to risk events
+        self.risk_manager.subscribe(self.on_risk_event)
+        
+    def start(self):
+        self.updater.start_polling()
+        
+    def status_command(self, update, context):
+        # Get and send bot status
+        status = self.execution_engine.get_status()
+        update.message.reply_text(f"Bot status: {status}")
+        
+    def risk_command(self, update, context):
+        # Handle risk on/off commands
+        if len(context.args) > 0:
+            if context.args[0].lower() == 'off':
+                self.risk_manager.disable_trading()
+                update.message.reply_text("Trading disabled")
+            elif context.args[0].lower() == 'on':
+                self.risk_manager.enable_trading()
+                update.message.reply_text("Trading enabled")
+        
+    def send_trade_alert(self, trade):
+        # Format and send trade alert
+        message = f"🔔 Trade {trade.status}\n"
+        message += f"Pair: {trade.pair}\n"
+        message += f"{'Entry' if trade.status == 'open' else 'Exit'} price: {trade.price}\n"
+        if trade.status == 'closed':
+            message += f"PnL: {trade.pnl_pct:.2f}% ({trade.pnl_usdt:.2f} USDT)\n"
+        self.send_message(message)
+        
+    def on_risk_event(self, event):
+        # Handle risk events
+        if event.type == 'MAX_DRAWDOWN_WARNING' and event.data.get('drawdown', 0) > 0.1:
+            self.send_message(f"⚠️ WARNING: Drawdown {event.data['drawdown']:.2f}% exceeds 10%")
+        
+    def send_message(self, text):
+        self.updater.bot.send_message(chat_id=self.chat_id, text=text)
+```
+
+# Test Strategy:
+1. Test Telegram bot setup and connection
+2. Verify command handlers work correctly
+3. Test alert formatting and delivery
+4. Validate authentication and security
+5. Test risk command functionality
+6. Verify integration with risk manager and execution engine

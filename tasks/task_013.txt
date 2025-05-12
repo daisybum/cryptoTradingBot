@@ -1,0 +1,113 @@
+# Task ID: 13
+# Title: React Web Dashboard Frontend
+# Status: pending
+# Dependencies: 12
+# Priority: low
+# Description: Implement a React-based web dashboard for monitoring and controlling the trading bot
+# Details:
+1. Set up Next.js project structure
+2. Implement authentication flow with JWT
+3. Create dashboard components:
+   - Portfolio overview
+   - Trade history
+   - Performance charts
+   - Parameter configuration
+   - Backtest results viewer
+4. Implement responsive design for mobile and desktop
+5. Set up API client for backend communication
+6. Implement real-time updates using WebSockets
+
+React Dashboard structure:
+```jsx
+// pages/index.js - Dashboard main page
+import { useState, useEffect } from 'react';
+import { useAuth } from '../hooks/useAuth';
+import DashboardLayout from '../components/DashboardLayout';
+import PortfolioOverview from '../components/PortfolioOverview';
+import TradeHistory from '../components/TradeHistory';
+import PerformanceCharts from '../components/PerformanceCharts';
+import { fetchStatus, fetchPerformance } from '../api/dashboard';
+
+export default function Dashboard() {
+  const { user } = useAuth();
+  const [status, setStatus] = useState(null);
+  const [performance, setPerformance] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      try {
+        setLoading(true);
+        const [statusData, performanceData] = await Promise.all([
+          fetchStatus(),
+          fetchPerformance()
+        ]);
+        setStatus(statusData);
+        setPerformance(performanceData);
+      } catch (error) {
+        console.error('Failed to load dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadDashboardData();
+    const interval = setInterval(loadDashboardData, 60000); // Refresh every minute
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  if (loading) return <div>Loading dashboard...</div>;
+  
+  return (
+    <DashboardLayout>
+      <h1>NASOSv5_mod3 Trading Dashboard</h1>
+      
+      <PortfolioOverview status={status} />
+      
+      <PerformanceCharts performance={performance} />
+      
+      <TradeHistory />
+    </DashboardLayout>
+  );
+}
+
+// components/PortfolioOverview.js
+export default function PortfolioOverview({ status }) {
+  if (!status) return null;
+  
+  return (
+    <div className="card">
+      <h2>Portfolio Overview</h2>
+      <div className="stats-grid">
+        <div className="stat-item">
+          <span className="stat-label">Balance</span>
+          <span className="stat-value">${status.balance.toFixed(2)}</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Status</span>
+          <span className={`stat-value status-${status.status.toLowerCase()}`}>
+            {status.status}
+          </span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Active Trades</span>
+          <span className="stat-value">{status.active_trades}</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Uptime</span>
+          <span className="stat-value">{status.uptime}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+# Test Strategy:
+1. Test React components with Jest and React Testing Library
+2. Verify authentication flow
+3. Test API client integration
+4. Validate responsive design on different devices
+5. Test WebSocket real-time updates
+6. Verify dashboard performance with large datasets

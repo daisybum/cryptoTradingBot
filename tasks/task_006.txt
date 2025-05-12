@@ -1,0 +1,69 @@
+# Task ID: 6
+# Title: Database Schema and Storage Implementation
+# Status: pending
+# Dependencies: 1
+# Priority: medium
+# Description: Set up PostgreSQL and InfluxDB schemas for trade data, performance metrics, and time-series data
+# Details:
+1. Create PostgreSQL database schemas for:
+   - trades (id, pair, open_time, close_time, qty, pnl_pct, ...)
+   - equity_curve (ts, balance_usdt)
+   - param_set (strategy, version, yaml_blob, created_at)
+   - stats_daily (date, win_rate, profit_factor, ...)
+2. Set up InfluxDB time-series database for OHLCV data
+3. Implement data access layer for both databases
+4. Create indexes for performance optimization
+5. Set up data retention policies
+6. Implement backup and recovery procedures
+
+Database Schema SQL:
+```sql
+CREATE TABLE trades (
+    id SERIAL PRIMARY KEY,
+    pair VARCHAR(20) NOT NULL,
+    open_time TIMESTAMP NOT NULL,
+    close_time TIMESTAMP,
+    qty DECIMAL(18,8) NOT NULL,
+    entry_price DECIMAL(18,8) NOT NULL,
+    exit_price DECIMAL(18,8),
+    pnl_pct DECIMAL(8,4),
+    pnl_usdt DECIMAL(18,8),
+    fee_usdt DECIMAL(18,8),
+    status VARCHAR(10) NOT NULL,
+    strategy VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE equity_curve (
+    ts TIMESTAMP PRIMARY KEY,
+    balance_usdt DECIMAL(18,8) NOT NULL,
+    open_positions_usdt DECIMAL(18,8) DEFAULT 0
+);
+
+CREATE TABLE param_set (
+    id SERIAL PRIMARY KEY,
+    strategy VARCHAR(50) NOT NULL,
+    version VARCHAR(20) NOT NULL,
+    yaml_blob TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE stats_daily (
+    date DATE PRIMARY KEY,
+    win_rate DECIMAL(5,2),
+    profit_factor DECIMAL(8,4),
+    sharpe DECIMAL(8,4),
+    calmar DECIMAL(8,4),
+    max_drawdown DECIMAL(8,4),
+    exposure_pct DECIMAL(5,2),
+    trades_count INTEGER
+);
+```
+
+# Test Strategy:
+1. Verify database schema creation
+2. Test data insertion, update, and query performance
+3. Validate indexes improve query performance
+4. Test data retention policies
+5. Verify backup and recovery procedures
+6. Load test with simulated high-frequency data

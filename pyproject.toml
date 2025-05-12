@@ -1,0 +1,67 @@
+[tool.poetry]
+name = "nasos-bot"
+version = "0.1.0"
+description = "NASOSv5_mod3 Bot - 바이낸스 알트코인 고빈도 트레이딩 봇"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+license = "MIT"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+ccxt = "^4.0.0"
+aiohttp = "^3.8.5"
+pandas = "^2.0.0"
+numpy = "^1.24.0"
+pydantic = "^2.0.0"
+fastapi = "^0.100.0"
+uvicorn = "^0.23.0"
+redis = "^4.6.0"
+psycopg2-binary = "^2.9.6"
+influxdb-client = "^1.36.0"
+python-telegram-bot = "^20.3"
+pyyaml = "^6.0"
+python-dotenv = "^1.0.0"
+typer = "^0.9.0"
+rich = "^13.4.0"
+httpx = "^0.24.1"
+ta-lib = "^0.4.28"
+freqtrade = "^2023.5"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+pytest-cov = "^4.1.0"
+pytest-asyncio = "^0.21.0"
+black = "^23.3.0"
+isort = "^5.12.0"
+flake8 = "^6.0.0"
+mypy = "^1.3.0"
+pre-commit = "^3.3.2"
+sphinx = "^7.0.1"
+sphinx-rtd-theme = "^1.2.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+python_classes = "Test*"
+addopts = "--cov=src --cov-report=term-missing"

@@ -1,0 +1,81 @@
+# Task ID: 7
+# Title: Performance Analytics Engine
+# Status: pending
+# Dependencies: 5, 6
+# Priority: medium
+# Description: Implement the analytics engine to calculate and store performance metrics
+# Details:
+1. Create analytics engine to calculate key performance metrics:
+   - Win rate
+   - Profit Factor
+   - Sharpe Ratio
+   - Calmar Ratio
+   - Maximum Drawdown
+   - Exposure Percentage
+2. Implement real-time equity curve tracking
+3. Create daily statistics aggregation
+4. Set up periodic calculation of performance metrics
+5. Implement data export functionality (CSV)
+
+Analytics Engine pseudocode:
+```python
+class PerformanceAnalytics:
+    def __init__(self, db_connection):
+        self.db = db_connection
+        
+    def calculate_win_rate(self, trades):
+        winning_trades = [t for t in trades if t.pnl_pct > 0]
+        return len(winning_trades) / len(trades) if trades else 0
+        
+    def calculate_profit_factor(self, trades):
+        gross_profit = sum(t.pnl_usdt for t in trades if t.pnl_usdt > 0)
+        gross_loss = abs(sum(t.pnl_usdt for t in trades if t.pnl_usdt < 0))
+        return gross_profit / gross_loss if gross_loss else float('inf')
+        
+    def calculate_sharpe_ratio(self, daily_returns, risk_free_rate=0):
+        # Calculate Sharpe ratio using daily returns
+        mean_return = np.mean(daily_returns)
+        std_dev = np.std(daily_returns)
+        return (mean_return - risk_free_rate) / std_dev if std_dev else 0
+        
+    def calculate_max_drawdown(self, equity_curve):
+        # Calculate maximum drawdown from equity curve
+        peak = equity_curve[0]
+        max_dd = 0
+        for value in equity_curve:
+            if value > peak:
+                peak = value
+            dd = (peak - value) / peak
+            max_dd = max(max_dd, dd)
+        return max_dd
+        
+    def update_daily_stats(self):
+        # Calculate and store daily statistics
+        today = datetime.now().date()
+        trades = self.db.get_trades_for_date(today)
+        equity_points = self.db.get_equity_curve_for_date(today)
+        
+        stats = {
+            'date': today,
+            'win_rate': self.calculate_win_rate(trades),
+            'profit_factor': self.calculate_profit_factor(trades),
+            # Calculate other metrics
+        }
+        
+        self.db.update_stats_daily(stats)
+        
+    def export_data(self, start_date, end_date, format='csv'):
+        # Export data for the specified date range
+        data = self.db.get_data_for_export(start_date, end_date)
+        if format == 'csv':
+            return self.convert_to_csv(data)
+        return data
+```
+
+# Test Strategy:
+1. Unit test each performance metric calculation
+2. Verify daily statistics aggregation
+3. Test equity curve tracking with simulated trades
+4. Validate CSV export functionality
+5. Benchmark performance with large datasets
+6. Compare calculated metrics with expected values from historical data

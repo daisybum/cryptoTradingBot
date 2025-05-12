@@ -1,0 +1,71 @@
+# NASOSv5_mod3 Bot 기본 설정 파일
+
+# 일반 설정
+bot_name: "NASOSv5_mod3 Bot"
+version: "0.1.0"
+log_level: "INFO"
+
+# 바이낸스 API 설정
+exchange:
+  name: "binance"
+  ccxt_config:
+    enableRateLimit: true
+    timeout: 60000
+  ccxt_async_config:
+    enableRateLimit: true
+    timeout: 60000
+
+# 데이터 수집 설정
+data_collection:
+  timeframes:
+    - "5m"  # 기본 타임프레임
+    - "15m" # 정보용 타임프레임
+    - "1h"  # 정보용 타임프레임
+  pairs:
+    - "BTC/USDT"
+    - "ETH/USDT"
+    # 상위 50개 알트코인은 자동으로 추가됨
+  cache_days: 30
+  retry_count: 3
+  retry_delay: 10
+
+# 전략 설정 (NASOSv5_mod3)
+strategy:
+  name: "NASOSv5_mod3"
+  timeframe: "5m"
+  params:
+    rsi_fast: 11
+    ewo_neg_limit: -6
+    # 다른 전략 파라미터들은 전략 파일에서 정의
+
+# 위험 관리 설정
+risk_management:
+  global_max_drawdown: 15.0  # 15%
+  per_trade_stop_loss: 3.5   # 3.5%
+  stake_mode: "RISK_FIXED"
+  risk_per_trade: 2.0        # 2%
+  daily_trade_limit: 60
+
+# 데이터베이스 설정
+database:
+  postgresql:
+    host: "postgres"
+    port: 5432
+    database: "nasos_bot"
+    username: "nasos_user"
+    # 비밀번호는 환경 변수로 설정
+  influxdb:
+    host: "influxdb"
+    port: 8086
+    org: "nasos_org"
+    bucket: "market_data"
+    # 토큰은 환경 변수로 설정
+
+# 알림 설정
+notifications:
+  telegram:
+    enabled: true
+    # 토큰과 채팅 ID는 환경 변수로 설정
+    send_on_trade: true
+    send_on_error: true
+    send_on_risk_event: true

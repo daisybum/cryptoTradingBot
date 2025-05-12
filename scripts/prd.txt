@@ -1,0 +1,173 @@
+# Project Name
+
+Binance Altcoin High‑Frequency Trading Bot — “NASOSv5\_mod3 Bot”
+
+# 1. Overview
+
+This bot is built on the public GitHub strategy **NASOSv5\_mod3** (NotAnotherSMAOffsetStrategy v5 mod3). It trades BTC, ETH, and top‑50 market‑cap altcoins on a 5‑minute timeframe (5 m) using Binance Spot USDT pairs.
+
+**Goal** – Reproduce the strategy’s historical performance (≈ 37 270 % profit, ≈ 11 % max drawdown, Sharpe ≈ 2.1) in live markets while offering a robust, extensible infrastructure usable for both live trading and back‑testing.
+
+**Target users**
+
+1. Beginners who want a plug‑and‑play live trading solution.
+2. Intermediate/advanced traders who wish to tune parameters and extend dashboards.
+
+# 2. Core Features
+
+\## 2.1 Market‑Data Integration
+
+* **Doing** – Streams Binance real‑time and historical OHLCV (5 m/15 m/1 h).
+* **Why** – Accurate RSI/EWO/SMA signals depend on low‑latency data.
+* **How** – Binance WebSocket streams + REST klines, 30‑day cache in InfluxDB, CCXT wrapper with retries.
+
+\## 2.2 Strategy Engine (NASOSv5\_mod3)
+
+* **Doing** – Buys when RSI\_fast + SMA offset conditions fire; filters with EWO, EMA, MA\_offset.
+* **Why** – Historical performance vastly outperforms buy‑and‑hold with controlled risk.
+* **How** – Freqtrade plug‑in (`user_data/strategies/NASOSv5_mod3.py`). Default `timeframe = 5m`; `15m/1h` used as informative charts only. Params in `params/default.yml` (e.g., `rsi_fast=11`, `ewo_neg_limit=-6`).
+
+\## 2.3 Automated Trade Execution
+
+* Freqtrade `trade` mode over Binance API (key, secret, sub‑account).
+* Safety: executes real orders only when `dry_run_wallet` ≥ 0.0001 BTC.
+* Primary order type – Limit; market fallback on volatility spikes.
+* Fills routed to portfolio in real‑time via WebSocket.
+
+\## 2.4 Risk Management
+
+| Item                |     Default | Description                                     |
+| ------------------- | ----------: | ----------------------------------------------- |
+| Global max drawdown |        15 % | If balance drawdown > 15 %, close all positions |
+| Per‑trade stop‑loss |       3.5 % | No trailing stop (mirrors No‑TSL variant)       |
+| Stake mode          | RISK\_FIXED | 2 % risk per coin per trade                     |
+| Daily trade limit   |       60 tx | Caps API usage & prevents over‑trading          |
+
+\## 2.5 Performance Analytics
+
+* Storage – PostgreSQL (`trades`, `stats_daily`, `equity_curve`).
+* Metrics – Win rate, Profit Factor, Sharpe, Calmar, Max Drawdown, Exposure %.
+* Visualization – Grafana dashboard + Telegram push for fills & risk events.
+
+\# 3. User Experience
+\## 3.1 Personas & Pain Points
+
+1. **Novice** – Needs one‑command setup; relies on Telegram alerts.
+2. **Trader** – Wants parameter A/B tests via YAML & Hyperopt CLI.
+3. **Portfolio Mgr** – Tracks equity curve & risk in Grafana; exports CSV.
+
+\## 3.2 Key Flows
+
+1. `./setup.sh` → enter API keys → bot starts.
+2. `ft backtesting --strategy NASOSv5_mod3` → review results.
+3. Switch to live: `ft trade --config live.json`.
+4. Visit Grafana URL → monitor portfolio & drawdown.
+5. If drawdown > 10 % alert → send `/risk off` Telegram command.
+
+\## 3.3 UI/UX
+
+* Phase 1 – Rich CLI with color menu.
+* Phase 2 – FastAPI + React dashboard with JWT.
+* Notifications – Telegram (bot token, chat\_id) for trades, errors, MDD.
+
+\# 4. Technical Architecture
+
+```mermaid
+graph TD
+  subgraph Runtime
+    WS[Binance WS] --> DataCollector
+    REST[Binance REST] --> DataCollector
+    DataCollector-->StrategyEngine
+    StrategyEngine-->ExecutionEngine
+    ExecutionEngine-->RiskManager
+    StrategyEngine-->DB[(PostgreSQL)]
+    ExecutionEngine-->DB
+    RiskManager--violations-->ExecutionEngine
+    DB-->API
+  end
+  API-->Dashboard[Grafana/React]
+```
+
+| Component       | Stack / Image                     |
+| --------------- | --------------------------------- |
+| DataCollector   | Python 3.11 + CCXT, aiohttp       |
+| StrategyEngine  | Freqtrade stable Docker image     |
+| ExecutionEngine | Freqtrade Binance connector       |
+| RiskManager     | FastAPI micro‑svc + Redis pub/sub |
+| DB              | PostgreSQL 15 \| InfluxDB 2.x     |
+| Dashboard       | Grafana 10 \| React (Next.js)     |
+
+\## 4.1 Data Models (abridged)
+
+* **trade**(id, pair, open\_time, close\_time, qty, pnl\_pct, …)
+* **candle\_5m**(pair, ts, open, high, low, close, volume)
+* **equity\_curve**(ts, balance\_usdt)
+* **param\_set**(strategy, version, yaml\_blob, created\_at)
+
+\## 4.2 APIs & Integrations
+
+* Binance Spot REST v3 + Market Stream WS.
+* Telegram Bot API for alerts.
+* Internal Freqtrade RPC on port 8080.
+
+\## 4.3 Infrastructure
+
+* VPS: 8 vCPU / 16 GB RAM (AWS t3.large) minimum.
+* Docker Compose deployment.
+* Cloudflare Zero‑Trust tunnel for secure dashboard access.
+* API keys stored in Hashicorp Vault (Transit) via Docker Secrets.
+
+\# 5. Development Roadmap
+\## 5.1 MVP (Month 0‑4)
+
+| Month | Milestone                                   |
+| ----- | ------------------------------------------- |
+|  M0   | Repo scaffold, Dockerfile, `setup.sh`.      |
+|  M1   | Binance connection, 5 m data pipeline live. |
+|  M2   | Port NASOSv5\_mod3, complete back‑test.     |
+|  M3   | Risk Manager v1 (per‑trade SL, global MDD). |
+|  M4   | CLI menu, Telegram alerts.                  |
+|  KPI  | Back‑test PF ≥ 6, live 30‑day MDD ≤ 15 %.   |
+
+\## 5.2 Post‑MVP
+
+1. Hyperopt grid search → auto parameter sets.
+2. Additional exchanges (Bybit, KuCoin).
+3. Web dashboard beta + OAuth2.
+4. Advanced risk (Kelly, vol‑target).
+5. ML ensemble signals (CatBoost/SARIMAX).
+6. Social strategy hub (share `param_set`).
+
+\# 6. Logical Dependency Chain
+
+1. Framework → 2. Binance API → 3. NASOS strategy → 4. Risk Manager → 5. CLI/UI → 6. Tests & deployment.
+
+\# 7. Risks & Mitigations
+
+| Risk                    | Impact            | Mitigation                                   |
+| ----------------------- | ----------------- | -------------------------------------------- |
+| Binance API rate‑limit  | Missed signals    | Async queue, backoff, weight cap monitoring. |
+| Parameter over‑fitting  | Poor live results | Walk‑forward, 14‑day live paper run.         |
+| Black‑swan market crash | Sudden MDD spike  | Global kill‑switch, 5 % circuit breaker.     |
+| Update downtime         | Missed orders     | Blue‑green deploy, container healthchecks.   |
+| Key/seed leak           | Asset loss        | Vault, withdraw disabled API keys.           |
+
+\# 8. Appendix
+\## 8.1 Research Notes
+
+* Strategy league shows v5\_mod3 top Sharpe among NASOS variants.
+* 5 m timeframe maximizes signal frequency vs noise trade‑off.
+* Regulatory note: Binance usage may require cross‑border compliance.
+
+\## 8.2 HW / Network Recommendations
+
+* Minimum: 2 vCPU / 4 GB RAM (single strategy).
+* Recommended: 8 vCPU / 16 GB RAM (50 pairs+).
+* Latency: < 80 ms to Binance Singapore endpoint.
+
+\## 8.3 Security Best Practices
+
+* API keys trade‑only, withdraw disabled.
+* Docker rootless mode.
+* Regular vulnerability scans (Trivy) & dependency watch (Snyk).
+  ────────────────────────────────────────────────────────────────────────

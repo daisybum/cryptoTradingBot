@@ -1,0 +1,95 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment variables and secrets
+.env
+.env.*
+*.env
+.venv
+env/
+venv/
+ENV/
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Logs
+logs/
+*.log
+
+# Database
+*.sqlite3
+*.db
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Task files (keep these in version control for collaboration)
+# tasks.json
+# tasks/
+
+# API keys and secrets
+*.pem
+*.key
+*.cert
+
+# Freqtrade specific
+user_data/
+freqtrade-plot.html
+plot/
+config.json
+config.*.json
+
+# Hashicorp Vault
+.vault-token
+
+# Grafana
+grafana/data/
+
+# InfluxDB
+influxdb/data/

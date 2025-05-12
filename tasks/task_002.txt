@@ -1,0 +1,47 @@
+# Task ID: 2
+# Title: Binance Data Collection Service
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Implement the data collection service that streams and stores OHLCV data from Binance
+# Details:
+1. Create DataCollector class using CCXT and aiohttp
+2. Implement WebSocket connection to Binance for real-time OHLCV data
+3. Implement REST API fallback for historical data retrieval
+4. Set up 30-day cache in InfluxDB for OHLCV data
+5. Implement retry logic with exponential backoff for API failures
+6. Create data models for candle_5m and other timeframes (15m, 1h)
+7. Implement rate limit monitoring to prevent API bans
+8. Create async queue for handling data processing
+9. Set up data validation to ensure integrity
+10. Implement logging for data collection events
+
+Code structure:
+```python
+class DataCollector:
+    def __init__(self, api_key, api_secret, db_connection):
+        self.exchange = ccxt.binance({'apiKey': api_key, 'secret': api_secret})
+        self.db = db_connection
+        self.pairs = []  # Top-50 market cap altcoins + BTC, ETH
+        self.timeframes = ['5m', '15m', '1h']
+        
+    async def start_websocket_streams(self):
+        # Connect to Binance WebSocket for real-time data
+        pass
+        
+    async def fetch_historical_data(self, pair, timeframe, since):
+        # Fetch historical data via REST API with retry logic
+        pass
+        
+    async def store_ohlcv(self, pair, timeframe, data):
+        # Store data in InfluxDB
+        pass
+```
+
+# Test Strategy:
+1. Unit tests for DataCollector class methods
+2. Integration test with Binance API (using test net)
+3. Verify data is correctly stored in InfluxDB
+4. Test retry logic by simulating API failures
+5. Benchmark data collection performance
+6. Validate data integrity by comparing WebSocket and REST API data

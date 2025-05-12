@@ -1,0 +1,63 @@
+# Task ID: 5
+# Title: Risk Management System
+# Status: pending
+# Dependencies: 4
+# Priority: high
+# Description: Implement the risk management system with global drawdown protection, per-trade stop-loss, and stake sizing
+# Details:
+1. Create FastAPI micro-service for risk management
+2. Implement Redis pub/sub for real-time risk events
+3. Configure global max drawdown protection at 15%
+4. Implement per-trade stop-loss at 3.5% (no trailing stop)
+5. Set up RISK_FIXED stake mode with 2% risk per coin per trade
+6. Implement daily trade limit of 60 transactions
+7. Create 5% circuit breaker for black-swan events
+8. Implement global kill-switch accessible via API
+
+Risk Manager pseudocode:
+```python
+class RiskManager:
+    def __init__(self, config):
+        self.max_drawdown = config.get('max_drawdown', 0.15)
+        self.per_trade_stop_loss = config.get('stop_loss', 0.035)
+        self.risk_per_trade = config.get('risk_per_trade', 0.02)
+        self.daily_trade_limit = config.get('daily_trade_limit', 60)
+        self.circuit_breaker = config.get('circuit_breaker', 0.05)
+        self.redis = Redis(**config['redis'])
+        
+    def check_global_drawdown(self, current_balance, peak_balance):
+        drawdown = 1 - (current_balance / peak_balance)
+        if drawdown > self.max_drawdown:
+            self.publish_risk_event('MAX_DRAWDOWN_EXCEEDED')
+            return False
+        return True
+        
+    def calculate_position_size(self, account_balance, pair):
+        # Calculate position size based on RISK_FIXED mode
+        risk_amount = account_balance * self.risk_per_trade
+        return risk_amount / self.per_trade_stop_loss
+        
+    def check_trade_allowed(self, pair, side, amount):
+        # Check daily trade limit and other risk parameters
+        daily_trades = self.get_daily_trade_count()
+        if daily_trades >= self.daily_trade_limit:
+            return False
+        return True
+        
+    def publish_risk_event(self, event_type, data=None):
+        # Publish risk event to Redis for subscribers
+        self.redis.publish('risk_events', json.dumps({
+            'type': event_type,
+            'data': data,
+            'timestamp': datetime.now().isoformat()
+        }))
+```
+
+# Test Strategy:
+1. Unit test risk calculation functions
+2. Test global drawdown protection with simulated balance changes
+3. Verify position sizing calculations
+4. Test daily trade limit enforcement
+5. Validate circuit breaker functionality
+6. Test Redis pub/sub for risk events
+7. Integration test with execution engine
