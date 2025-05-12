@@ -25,7 +25,7 @@
 5. Verify network connectivity between containers
 
 # Subtasks:
-## 1. Initialize Git Repository with Project Structure [in-progress]
+## 1. Initialize Git Repository with Project Structure [done]
 ### Dependencies: None
 ### Description: Create a new Git repository with the initial project structure, including directories for source code, configuration, documentation, and tests. Set up .gitignore and README.md with project overview.
 ### Details:
@@ -45,7 +45,7 @@ Acceptance Criteria:
 
 Estimated Effort: 2-3 hours
 
-## 2. Create Base Dockerfile for Application [pending]
+## 2. Create Base Dockerfile for Application [in-progress]
 ### Dependencies: 1.1
 ### Description: Develop a Dockerfile that defines the application environment, including all necessary dependencies, runtime configurations, and security hardening measures.
 ### Details:
