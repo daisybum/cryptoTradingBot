@@ -27,6 +27,12 @@ rich = "^13.4.0"
 httpx = "^0.24.1"
 ta-lib = "^0.4.28"
 freqtrade = "^2023.5"
+hvac = "^1.1.1"
+cryptography = "^41.0.0"
+pyjwt = "^2.8.0"
+passlib = "^1.7.4"
+python-jose = "^3.3.0"
+requests = "^2.31.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.1"

@@ -1,6 +1,50 @@
 version: '3.8'
 
 services:
+  # Hashicorp Vault (보안 비밀 관리)
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: nasos-vault
+    restart: unless-stopped
+    ports:
+      - "8200:8200"
+    volumes:
+      - vault-data:/vault/data
+      - ./config/vault/config.hcl:/vault/config/config.hcl:ro
+      - ./config/vault:/vault/config
+    cap_add:
+      - IPC_LOCK
+    environment:
+      - VAULT_ADDR=http://0.0.0.0:8200
+      - VAULT_DEV_ROOT_TOKEN_ID=root
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    command: server -config=/vault/config/config.hcl
+    networks:
+      - nasos-network
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Cloudflare SSL 인증서 관리자
+  cloudflare-companion:
+    image: oznu/cloudflare-companion:latest
+    container_name: nasos-cloudflare
+    restart: unless-stopped
+    environment:
+      - CF_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - CF_ZONE=${CLOUDFLARE_ZONE}
+      - DOMAIN_WHITELIST=${DOMAIN_WHITELIST}
+      - TLD_WHITELIST=${TLD_WHITELIST}
+      - SWARM_MODE=false
+      - CHECK_INTERVAL=300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - nasos-network
+
   # 메인 애플리케이션 (NASOSv5_mod3 Bot)
   nasos-bot:
     build:
@@ -94,6 +138,9 @@ services:
     command: python -m src.api_server.main
     ports:
       - "8080:8080"
+    labels:
+      - "cloudflare.subdomain=api"
+      - "cloudflare.proxied=true"
     depends_on:
       - postgres
       - influxdb
@@ -205,29 +252,19 @@ services:
 
   # Hashicorp Vault (보안 비밀 관리)
   vault:
-    image: hashicorp/vault:1.14
+    image: hashicorp/vault:latest
     container_name: nasos-vault
     restart: unless-stopped
-    cap_add:
-      - IPC_LOCK
+    ports:
+      - "8200:8200"
     volumes:
       - vault-data:/vault/data
-      - ./config/vault:/vault/config
     environment:
-      - VAULT_ADDR=http://0.0.0.0:8200
-      - VAULT_API_ADDR=http://0.0.0.0:8200
-      - VAULT_DEV_ROOT_TOKEN_ID=${VAULT_ROOT_TOKEN:-root}
-    command: server -dev -dev-root-token-id=${VAULT_ROOT_TOKEN:-root}
+      - VAULT_DEV_ROOT_TOKEN_ID=root
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    command: server -dev
     networks:
       - nasos-network
-    profiles:
-      - vault
-    healthcheck:
-      test: ["CMD", "vault", "status"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
 
   # Cloudflare Tunnel (보안 액세스)
   cloudflared:
@@ -250,6 +287,9 @@ networks:
     driver: bridge
 
 volumes:
+  # Vault 데이터 볼륨
+  vault-data:
+    driver: local
   postgres-data:
   influxdb-data:
   redis-data:
