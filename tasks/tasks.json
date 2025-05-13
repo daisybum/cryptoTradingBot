@@ -36,7 +36,7 @@
             2
           ],
           "details": "- Define all required services (app, database, cache, etc.)\n- Configure service dependencies and startup order\n- Set up named volumes for persistent data\n- Create isolated networks for service communication\n- Configure environment variables and secrets handling\n- Add resource constraints for each service\n- Create separate development and production configurations\n\nAcceptance Criteria:\n- All services start correctly with docker-compose up\n- Services can communicate with each other\n- Persistent data is properly stored in volumes\n- Environment-specific configurations work as expected\n- Resource limits are properly defined\n\nEstimated Effort: 5-6 hours",
-          "status": "in-progress"
+          "status": "done"
         },
         {
           "id": 4,
@@ -46,7 +46,7 @@
             3
           ],
           "details": "- Write shell script for environment setup\n- Implement interactive prompts for configuration options\n- Add validation for user inputs\n- Generate required configuration files\n- Set up environment variables file (.env)\n- Create backup and restore functionality\n- Add documentation for script usage\n\nAcceptance Criteria:\n- Script runs without errors on target platforms\n- All required configurations are properly set up\n- User inputs are validated and sanitized\n- Script provides clear feedback and instructions\n- Configuration can be backed up and restored\n\nEstimated Effort: 6-8 hours",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": 5,
@@ -57,7 +57,7 @@
             4
           ],
           "details": "- Configure Hashicorp Vault container or external connection\n- Set up Vault policies and access controls\n- Implement secret rotation mechanism\n- Configure Cloudflare SSL/TLS integration\n- Set up secure API communication\n- Document security architecture and procedures\n- Create security testing scripts\n\nAcceptance Criteria:\n- Vault is properly configured and accessible\n- Secrets are securely stored and retrieved\n- SSL/TLS is properly configured for all services\n- Security documentation is comprehensive\n- Security tests pass successfully\n\nEstimated Effort: 8-10 hours",
-          "status": "pending"
+          "status": "in-progress"
         }
       ]
     },

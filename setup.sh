@@ -179,10 +179,55 @@ show_logo() {
 
 # 메인 함수
 main() {
-    show_logo
-        return 1
-    fi
-    return 0
+    # 로그 시작
+    log "INFO" "NASOSv5_mod3 Bot 설정 스크립트 시작"
+    
+    # 환경 확인
+    check_environment
+    
+    # 메인 루프
+    while true; do
+        show_main_menu
+        read -p "> " choice
+        
+        case $choice in
+            1)
+                setup_new_environment
+                ;;
+            2)
+                update_existing_config
+                ;;
+            3)
+                backup_config
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            4)
+                restore_config
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            5)
+                docker_container_menu
+                ;;
+            6)
+                check_system_status
+                ;;
+            7)
+                strategy_management_menu
+                ;;
+            8)
+                manage_security_settings
+                ;;
+            9)
+                log "INFO" "NASOSv5_mod3 Bot 설정 스크립트 종료"
+                echo -e "${GREEN}NASOSv5_mod3 Bot 설정 스크립트를 종료합니다.${NC}"
+                exit 0
+                ;;
+            *)
+                echo -e "${RED}잘못된 선택입니다. 다시 시도하세요.${NC}"
+                sleep 2
+                ;;
+        esac
+    done
 }
 
 function validate_api_key() {
@@ -715,9 +760,10 @@ function show_main_menu() {
     echo -e "5) ${YELLOW}Docker 컨테이너 관리${NC}"
     echo -e "6) ${BLUE}시스템 상태 확인${NC}"
     echo -e "7) ${GREEN}전략 관리${NC}"
-    echo -e "8) ${RED}종료${NC}"
+    echo -e "8) ${MAGENTA}보안 설정 관리${NC}"
+    echo -e "9) ${RED}종료${NC}"
     echo ""
-    echo -e "${YELLOW}선택하세요 (1-8):${NC}"
+    echo -e "${YELLOW}선택하세요 (1-9):${NC}"
 }
 
 # Docker 컨테이너 관리 메뉴
@@ -947,6 +993,9 @@ function main() {
                 strategy_management_menu
                 ;;
             8)
+                manage_security_settings
+                ;;
+            9)
                 log "INFO" "NASOSv5_mod3 Bot 설정 스크립트 종료"
                 echo -e "${GREEN}NASOSv5_mod3 Bot 설정 스크립트를 종료합니다.${NC}"
                 exit 0
@@ -957,6 +1006,390 @@ function main() {
                 ;;
         esac
     done
+}
+
+# 보안 설정 관리 메뉴
+function manage_security_settings() {
+    local choice
+    
+    while true; do
+        clear
+        show_logo
+        
+        echo -e "${MAGENTA}${BOLD}보안 설정 관리 메뉴${NC}"
+        echo -e "${YELLOW}=======================================================${NC}"
+        echo ""
+        echo -e "1) ${GREEN}Vault 서버 초기화${NC}"
+        echo -e "2) ${BLUE}API 키 관리${NC}"
+        echo -e "3) ${CYAN}데이터베이스 자격 증명 관리${NC}"
+        echo -e "4) ${YELLOW}텔레그램 자격 증명 관리${NC}"
+        echo -e "5) ${MAGENTA}보안 백업 생성${NC}"
+        echo -e "6) ${BLUE}보안 백업 복원${NC}"
+        echo -e "7) ${RED}메인 메뉴로 돌아가기${NC}"
+        echo ""
+        echo -e "${YELLOW}선택하세요 (1-7):${NC}"
+        read -p "> " choice
+        
+        case $choice in
+            1)
+                initialize_vault_server
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            2)
+                manage_api_keys
+                ;;
+            3)
+                manage_database_credentials
+                ;;
+            4)
+                manage_telegram_credentials
+                ;;
+            5)
+                create_security_backup
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            6)
+                restore_security_backup
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            7)
+                return
+                ;;
+            *)
+                echo -e "${RED}잘못된 선택입니다. 다시 시도하세요.${NC}"
+                sleep 2
+                ;;
+        esac
+    done
+}
+
+# Vault 서버 초기화 함수
+function initialize_vault_server() {
+    echo -e "${BLUE}Vault 서버 초기화 중...${NC}"
+    
+    # 보안 유틸리티 스크립트 소싱
+    source "${SCRIPT_DIR}/scripts/security_utils.sh"
+    
+    # Vault 서버 실행 확인
+    if ! check_vault_status; then
+        echo -e "${YELLOW}Vault 서버를 시작합니다...${NC}"
+        docker-compose up -d vault
+        sleep 5
+    fi
+    
+    # Vault 초기화
+    initialize_vault
+    
+    # Vault 초기화 스크립트 실행
+    echo -e "${YELLOW}Vault 정책 및 시크릿 엔진 설정 중...${NC}"
+    bash "${SCRIPT_DIR}/config/vault/vault-init.sh"
+    
+    echo -e "${GREEN}Vault 서버가 성공적으로 초기화되었습니다.${NC}"
+}
+
+# API 키 관리 함수
+function manage_api_keys() {
+    local choice
+    local exchange
+    local api_key
+    local api_secret
+    
+    while true; do
+        clear
+        show_logo
+        
+        echo -e "${BLUE}${BOLD}API 키 관리${NC}"
+        echo -e "${YELLOW}=======================================================${NC}"
+        echo ""
+        echo -e "1) ${GREEN}API 키 추가/수정${NC}"
+        echo -e "2) ${BLUE}API 키 조회${NC}"
+        echo -e "3) ${RED}API 키 삭제${NC}"
+        echo -e "4) ${MAGENTA}이전 메뉴로 돌아가기${NC}"
+        echo ""
+        echo -e "${YELLOW}선택하세요 (1-4):${NC}"
+        read -p "> " choice
+        
+        case $choice in
+            1)
+                echo -e "${YELLOW}거래소 이름을 입력하세요 (예: binance):${NC}"
+                read -p "> " exchange
+                echo -e "${YELLOW}API 키를 입력하세요:${NC}"
+                read -p "> " api_key
+                echo -e "${YELLOW}API 시크릿을 입력하세요:${NC}"
+                read -p "> " api_secret
+                
+                # 보안 유틸리티 스크립트 소싱
+                source "${SCRIPT_DIR}/scripts/security_utils.sh"
+                
+                # API 키 저장
+                store_api_credentials "$exchange" "$api_key" "$api_secret"
+                
+                echo -e "${GREEN}API 키가 성공적으로 저장되었습니다.${NC}"
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            2)
+                echo -e "${YELLOW}거래소 이름을 입력하세요 (예: binance):${NC}"
+                read -p "> " exchange
+                
+                # 보안 유틸리티 스크립트 소싱
+                source "${SCRIPT_DIR}/scripts/security_utils.sh"
+                
+                # API 키 조회
+                retrieve_api_credentials "$exchange"
+                
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            3)
+                echo -e "${YELLOW}거래소 이름을 입력하세요 (예: binance):${NC}"
+                read -p "> " exchange
+                
+                # 보안 유틸리티 스크립트 소싱
+                source "${SCRIPT_DIR}/scripts/security_utils.sh"
+                
+                # API 키 삭제
+                delete_api_credentials "$exchange"
+                
+                echo -e "${GREEN}API 키가 성공적으로 삭제되었습니다.${NC}"
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            4)
+                return
+                ;;
+            *)
+                echo -e "${RED}잘못된 선택입니다. 다시 시도하세요.${NC}"
+                sleep 2
+                ;;
+        esac
+    done
+}
+
+# 데이터베이스 자격 증명 관리 함수
+function manage_database_credentials() {
+    local choice
+    local db_type
+    local db_host
+    local db_port
+    local db_name
+    local db_user
+    local db_password
+    
+    while true; do
+        clear
+        show_logo
+        
+        echo -e "${BLUE}${BOLD}데이터베이스 자격 증명 관리${NC}"
+        echo -e "${YELLOW}=======================================================${NC}"
+        echo ""
+        echo -e "1) ${GREEN}데이터베이스 자격 증명 추가/수정${NC}"
+        echo -e "2) ${BLUE}데이터베이스 자격 증명 조회${NC}"
+        echo -e "3) ${RED}데이터베이스 자격 증명 삭제${NC}"
+        echo -e "4) ${MAGENTA}이전 메뉴로 돌아가기${NC}"
+        echo ""
+        echo -e "${YELLOW}선택하세요 (1-4):${NC}"
+        read -p "> " choice
+        
+        case $choice in
+            1)
+                echo -e "${YELLOW}데이터베이스 유형을 입력하세요 (예: postgresql, influxdb):${NC}"
+                read -p "> " db_type
+                echo -e "${YELLOW}데이터베이스 호스트를 입력하세요:${NC}"
+                read -p "> " db_host
+                echo -e "${YELLOW}데이터베이스 포트를 입력하세요:${NC}"
+                read -p "> " db_port
+                echo -e "${YELLOW}데이터베이스 이름을 입력하세요:${NC}"
+                read -p "> " db_name
+                echo -e "${YELLOW}데이터베이스 사용자를 입력하세요:${NC}"
+                read -p "> " db_user
+                echo -e "${YELLOW}데이터베이스 비밀번호를 입력하세요:${NC}"
+                read -p "> " db_password
+                
+                # 보안 유틸리티 스크립트 소싱
+                source "${SCRIPT_DIR}/scripts/security_utils.sh"
+                
+                # 데이터베이스 자격 증명 저장
+                store_database_credentials "$db_type" "$db_host" "$db_port" "$db_name" "$db_user" "$db_password"
+                
+                echo -e "${GREEN}데이터베이스 자격 증명이 성공적으로 저장되었습니다.${NC}"
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            2)
+                echo -e "${YELLOW}데이터베이스 유형을 입력하세요 (예: postgresql, influxdb):${NC}"
+                read -p "> " db_type
+                
+                # 보안 유틸리티 스크립트 소싱
+                source "${SCRIPT_DIR}/scripts/security_utils.sh"
+                
+                # 데이터베이스 자격 증명 조회
+                retrieve_database_credentials "$db_type"
+                
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            3)
+                echo -e "${YELLOW}데이터베이스 유형을 입력하세요 (예: postgresql, influxdb):${NC}"
+                read -p "> " db_type
+                
+                # 보안 유틸리티 스크립트 소싱
+                source "${SCRIPT_DIR}/scripts/security_utils.sh"
+                
+                # 데이터베이스 자격 증명 삭제
+                delete_database_credentials "$db_type"
+                
+                echo -e "${GREEN}데이터베이스 자격 증명이 성공적으로 삭제되었습니다.${NC}"
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            4)
+                return
+                ;;
+            *)
+                echo -e "${RED}잘못된 선택입니다. 다시 시도하세요.${NC}"
+                sleep 2
+                ;;
+        esac
+    done
+}
+
+# 텔레그램 자격 증명 관리 함수
+function manage_telegram_credentials() {
+    local choice
+    local token
+    local chat_id
+    
+    while true; do
+        clear
+        show_logo
+        
+        echo -e "${BLUE}${BOLD}텔레그램 자격 증명 관리${NC}"
+        echo -e "${YELLOW}=======================================================${NC}"
+        echo ""
+        echo -e "1) ${GREEN}텔레그램 자격 증명 추가/수정${NC}"
+        echo -e "2) ${BLUE}텔레그램 자격 증명 조회${NC}"
+        echo -e "3) ${RED}텔레그램 자격 증명 삭제${NC}"
+        echo -e "4) ${MAGENTA}이전 메뉴로 돌아가기${NC}"
+        echo ""
+        echo -e "${YELLOW}선택하세요 (1-4):${NC}"
+        read -p "> " choice
+        
+        case $choice in
+            1)
+                echo -e "${YELLOW}텔레그램 봇 토큰을 입력하세요:${NC}"
+                read -p "> " token
+                echo -e "${YELLOW}텔레그램 채팅 ID를 입력하세요:${NC}"
+                read -p "> " chat_id
+                
+                # 보안 유틸리티 스크립트 소싱
+                source "${SCRIPT_DIR}/scripts/security_utils.sh"
+                
+                # 텔레그램 자격 증명 저장
+                store_telegram_credentials "$token" "$chat_id"
+                
+                echo -e "${GREEN}텔레그램 자격 증명이 성공적으로 저장되었습니다.${NC}"
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            2)
+                # 보안 유틸리티 스크립트 소싱
+                source "${SCRIPT_DIR}/scripts/security_utils.sh"
+                
+                # 텔레그램 자격 증명 조회
+                retrieve_telegram_credentials
+                
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            3)
+                # 보안 유틸리티 스크립트 소싱
+                source "${SCRIPT_DIR}/scripts/security_utils.sh"
+                
+                # 텔레그램 자격 증명 삭제
+                delete_telegram_credentials
+                
+                echo -e "${GREEN}텔레그램 자격 증명이 성공적으로 삭제되었습니다.${NC}"
+                read -p "계속하려면 Enter 키를 누르세요..." continue
+                ;;
+            4)
+                return
+                ;;
+            *)
+                echo -e "${RED}잘못된 선택입니다. 다시 시도하세요.${NC}"
+                sleep 2
+                ;;
+        esac
+    done
+}
+
+# 보안 백업 생성 함수
+function create_security_backup() {
+    echo -e "${BLUE}보안 백업 생성 중...${NC}"
+    
+    # 보안 유틸리티 스크립트 소싱
+    source "${SCRIPT_DIR}/scripts/security_utils.sh"
+    
+    # 백업 디렉토리 생성
+    local backup_dir="${SCRIPT_DIR}/backups/security"
+    mkdir -p "$backup_dir"
+    
+    # 백업 파일 이름 생성
+    local backup_file="${backup_dir}/security_backup_$(date +%Y%m%d_%H%M%S).json"
+    
+    # Vault 백업 생성
+    backup_vault "$backup_file"
+    
+    echo -e "${GREEN}보안 백업이 성공적으로 생성되었습니다: ${backup_file}${NC}"
+}
+
+# 보안 백업 복원 함수
+function restore_security_backup() {
+    echo -e "${BLUE}보안 백업 복원 중...${NC}"
+    
+    # 보안 유틸리티 스크립트 소싱
+    source "${SCRIPT_DIR}/scripts/security_utils.sh"
+    
+    # 백업 디렉토리 확인
+    local backup_dir="${SCRIPT_DIR}/backups/security"
+    if [ ! -d "$backup_dir" ]; then
+        echo -e "${RED}백업 디렉토리가 존재하지 않습니다: ${backup_dir}${NC}"
+        return 1
+    fi
+    
+    # 백업 파일 목록 표시
+    echo -e "${YELLOW}사용 가능한 백업 파일:${NC}"
+    local i=1
+    local backup_files=("$backup_dir"/*.json)
+    
+    if [ ${#backup_files[@]} -eq 0 ]; then
+        echo -e "${RED}백업 파일이 없습니다.${NC}"
+        return 1
+    fi
+    
+    for file in "${backup_files[@]}"; do
+        echo -e "$i) $(basename "$file")"
+        i=$((i+1))
+    done
+    
+    # 백업 파일 선택
+    echo -e "${YELLOW}복원할 백업 파일 번호를 선택하세요:${NC}"
+    read -p "> " choice
+    
+    if [ -z "$choice" ] || ! [[ "$choice" =~ ^[0-9]+$ ]] || [ "$choice" -lt 1 ] || [ "$choice" -gt ${#backup_files[@]} ]; then
+        echo -e "${RED}잘못된 선택입니다.${NC}"
+        return 1
+    fi
+    
+    local selected_file="${backup_files[$((choice-1))]}"
+    
+    # 백업 복원 확인
+    echo -e "${YELLOW}다음 백업 파일을 복원합니다: $(basename "$selected_file")${NC}"
+    echo -e "${RED}경고: 이 작업은 현재 저장된 모든 보안 정보를 덮어씁니다.${NC}"
+    echo -e "${YELLOW}계속하시겠습니까? (y/n)${NC}"
+    read -p "> " confirm
+    
+    if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
+        echo -e "${YELLOW}백업 복원이 취소되었습니다.${NC}"
+        return 0
+    fi
+    
+    # Vault 백업 복원
+    restore_vault "$selected_file"
+    
+    echo -e "${GREEN}보안 백업이 성공적으로 복원되었습니다.${NC}"
 }
 
 # 스크립트 실행
