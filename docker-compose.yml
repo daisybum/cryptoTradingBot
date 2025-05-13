@@ -66,7 +66,7 @@ services:
       - LOG_LEVEL=INFO
       - MODE=dryrun
     env_file:
-      - .env
+      - config/env/project.env
     networks:
       - nasos-network
     healthcheck:
@@ -95,7 +95,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     env_file:
-      - .env
+      - config/env/project.env
     networks:
       - nasos-network
     depends_on:
@@ -123,7 +123,7 @@ services:
       - LOG_LEVEL=INFO
       - SERVICE=risk_manager
     env_file:
-      - .env
+      - config/env/project.env
     networks:
       - nasos-network
 
@@ -153,7 +153,7 @@ services:
       - LOG_LEVEL=INFO
       - SERVICE=api_server
     env_file:
-      - .env
+      - config/env/project.env
     networks:
       - nasos-network
     healthcheck:

@@ -31,7 +31,7 @@ class EnvLoader:
         self.project_root = Path(__file__).parent.parent.parent.absolute()
         
         # 환경 변수 파일 경로
-        self.env_file = env_file or os.path.join(self.project_root, '.env')
+        self.env_file = env_file or os.path.join(self.project_root, 'config/env/project.env')
         
         # 환경 변수 로드
         self._load_env_file()
