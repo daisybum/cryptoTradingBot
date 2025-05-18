@@ -1,6 +1,6 @@
 # Task ID: 2
 # Title: Binance Data Collection Service
-# Status: pending
+# Status: done
 # Dependencies: 1
 # Priority: high
 # Description: Implement the data collection service that streams and stores OHLCV data from Binance
@@ -45,3 +45,89 @@ class DataCollector:
 4. Test retry logic by simulating API failures
 5. Benchmark data collection performance
 6. Validate data integrity by comparing WebSocket and REST API data
+
+# Subtasks:
+## 1. Core DataCollector Class Implementation with CCXT Integration [done]
+### Dependencies: None
+### Description: Develop the foundational DataCollector class that interfaces with Binance using the CCXT library. This class should support initialization, configuration, and provide methods for both REST and WebSocket data access. Ensure modularity for future extension and integration with other components.
+### Details:
+Implementation Requirements:
+- Use the CCXT library to instantiate and configure a Binance exchange client.
+- Support dynamic configuration (API keys, endpoints, symbols, intervals).
+- Provide methods for basic data retrieval (e.g., fetch_ohlcv, fetch_ticker).
+- Ensure proper error handling for initialization and API calls.
+Acceptance Criteria:
+- The class can be instantiated with valid configuration and connects to Binance via CCXT.
+- Methods return expected data structures for valid requests.
+Testing Strategy:
+- Unit tests for class instantiation and method outputs using mock CCXT responses.
+- Integration test with live Binance (sandbox) to verify connectivity and data retrieval.
+
+## 2. WebSocket Connection and Real-Time Data Handling [done]
+### Dependencies: 2.1
+### Description: Implement robust WebSocket connectivity for real-time market data streaming from Binance. Ensure reconnection logic, message parsing, and event-driven data handling are in place.
+### Details:
+Implementation Requirements:
+- Establish and maintain a WebSocket connection to Binance for selected symbols and channels (e.g., trades, ticker, kline).
+- Parse incoming messages and dispatch to appropriate handlers.
+- Implement automatic reconnection and backoff strategies on disconnects.
+- Support subscription management for dynamic symbol/channel changes.
+Acceptance Criteria:
+- Real-time data is received, parsed, and made available to downstream consumers.
+- Connection is resilient to network interruptions and recovers automatically.
+Testing Strategy:
+- Simulate connection drops and verify reconnection logic.
+- Validate message parsing with sample payloads.
+- Integration test with live Binance WebSocket endpoint.
+
+## 3. REST API Fallback and Historical Data Retrieval with Retry Logic [done]
+### Dependencies: 2.1
+### Description: Implement REST API fallback for historical data retrieval and as a backup for real-time data gaps. Integrate robust retry logic for transient errors and ensure data completeness.
+### Details:
+Implementation Requirements:
+- Use CCXT REST endpoints to fetch historical OHLCV and trade data.
+- Implement retry logic with exponential backoff for transient failures.
+- Detect and fill data gaps when WebSocket data is missing or delayed.
+- Ensure idempotency and avoid duplicate data on retries.
+Acceptance Criteria:
+- Historical data can be retrieved for arbitrary time ranges with retries on failure.
+- Data gaps in real-time streams are detected and filled via REST fallback.
+Testing Strategy:
+- Unit tests for retry logic and error handling.
+- Integration tests simulating API failures and verifying fallback behavior.
+- Data completeness checks for overlapping REST and WebSocket data.
+
+## 4. InfluxDB Integration for OHLCV Data Caching [done]
+### Dependencies: 2.1, 2.3
+### Description: Integrate InfluxDB for efficient caching and querying of OHLCV data, with a 30-day rolling retention policy. Ensure schema design supports fast lookups and aggregation.
+### Details:
+Implementation Requirements:
+- Design and implement InfluxDB schema for OHLCV data (measurement, tags, fields).
+- Implement write and query methods for storing and retrieving data.
+- Set up a 30-day retention policy for automatic data expiration.
+- Ensure atomic writes and handle potential write conflicts.
+Acceptance Criteria:
+- OHLCV data is persisted in InfluxDB and can be queried efficiently for any time window within 30 days.
+- Data older than 30 days is automatically purged.
+Testing Strategy:
+- Integration tests for data ingestion and retrieval.
+- Retention policy verification by inserting test data and checking expiration.
+- Performance tests for bulk writes and queries.
+
+## 5. Rate Limit Monitoring and Data Validation [done]
+### Dependencies: 2.1, 2.2, 2.3, 2.4
+### Description: Implement monitoring for Binance API rate limits and comprehensive data validation for all incoming and stored data. Ensure alerts or throttling on approaching rate limits and reject or correct invalid data.
+### Details:
+Implementation Requirements:
+- Track and log API usage against Binance rate limits for both REST and WebSocket endpoints.
+- Implement throttling or backoff when nearing rate limits.
+- Validate all incoming data (schema, value ranges, timestamp consistency) before storage or processing.
+- Provide alerting or logging for rate limit breaches and data validation failures.
+Acceptance Criteria:
+- No API calls are made after rate limits are reached; system recovers gracefully.
+- Invalid data is detected and handled according to policy (rejection, correction, or alert).
+Testing Strategy:
+- Simulate high-frequency API calls to test rate limit handling.
+- Inject malformed or out-of-range data to verify validation logic.
+- Monitor logs/alerts for correct detection and response.
+

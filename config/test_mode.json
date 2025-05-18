@@ -1,0 +1,76 @@
+{
+  "test_mode": true,
+  "use_mock_data": true,
+  "symbols": [
+    "BTC/USDT",
+    "ETH/USDT",
+    "SOL/USDT",
+    "XRP/USDT",
+    "ADA/USDT",
+    "DOT/USDT",
+    "DOGE/USDT",
+    "AVAX/USDT",
+    "LINK/USDT",
+    "MATIC/USDT",
+    "UNI/USDT",
+    "ATOM/USDT",
+    "AAVE/USDT",
+    "ALGO/USDT",
+    "LTC/USDT",
+    "BCH/USDT"
+  ],
+  "timeframes": [
+    "1m",
+    "3m",
+    "5m",
+    "15m",
+    "30m",
+    "1h",
+    "2h",
+    "4h",
+    "6h",
+    "8h",
+    "12h",
+    "1d",
+    "3d",
+    "1w"
+  ],
+  "retry_interval": 30,
+  "max_retries": 15,
+  "log_level": "DEBUG",
+  "error_handling": {
+    "connection_timeout": 10,
+    "read_timeout": 30,
+    "exponential_backoff": true,
+    "backoff_factor": 1.5,
+    "jitter": true,
+    "circuit_breaker": {
+      "enabled": true,
+      "failure_threshold": 5,
+      "reset_timeout": 300
+    },
+    "fallback": {
+      "enabled": true,
+      "use_cached_data": true,
+      "cache_ttl": 3600,
+      "generate_synthetic_data": true
+    }
+  },
+  "mock_data": {
+    "price_volatility": 0.02,
+    "volume_volatility": 0.05,
+    "trend_bias": 0.0,
+    "seed": 42,
+    "data_points": 1000
+  },
+  "health_check": {
+    "enabled": true,
+    "interval": 60,
+    "timeout": 5
+  },
+  "performance": {
+    "batch_size": 100,
+    "max_workers": 4,
+    "queue_size": 1000
+  }
+}

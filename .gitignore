@@ -38,11 +38,11 @@ coverage.xml
 .ipynb_checkpoints
 
 # Environment variables and secrets
-.env
-.env.*
-*.env
+# .env
+# .env.*
+# *.env
 .venv
-env/
+# env/
 venv/
 ENV/
 

@@ -45,3 +45,29 @@ class NASOSv5_mod3(IStrategy):
 4. Test with different parameter sets
 5. Validate risk management settings
 6. Perform walk-forward testing to check for overfitting
+
+# Subtasks:
+## 1. Core Strategy Class Implementation with Indicators [pending]
+### Dependencies: None
+### Description: Implement the base NASOSv5_mod3 strategy class with all required technical indicators (RSI, EWO, EMA, SMA) following Freqtrade's framework structure.
+### Details:
+Create the strategy class inheriting from IStrategy. Implement populate_indicators() method to calculate RSI, EWO (Elliott Wave Oscillator), multiple EMAs (5, 8, 13, 21, 34, 144), and SMAs. Ensure proper normalization of indicators and add necessary helper methods for indicator calculations. Include proper documentation and type hints for all methods. The implementation must follow Freqtrade's dataframe structure with OHLCV data.
+
+## 2. Buy Signal Logic Implementation [pending]
+### Dependencies: 3.1
+### Description: Implement the buy signal logic with configurable parameters based on the NASOSv5_mod3 strategy specifications.
+### Details:
+Create populate_entry_trend() method implementing the buy conditions using the calculated indicators. Include at least 3 distinct buy conditions based on RSI, EMA crossovers, and EWO values. Implement hyperopt-ready parameters for all thresholds (RSI levels, EMA periods, EWO thresholds). Add custom buy tag logic to identify entry types. Ensure all buy conditions are properly documented with comments explaining the trading logic behind each condition.
+
+## 3. Sell Signal Logic with Stop-Loss Implementation [pending]
+### Dependencies: 3.1, 3.2
+### Description: Implement the sell signal logic including dynamic stop-loss mechanisms and take-profit targets based on the NASOSv5_mod3 specifications.
+### Details:
+Create populate_exit_trend() method with sell conditions based on profit targets, RSI overbought conditions, and trend reversal signals. Implement custom_stoploss() method with dynamic stop-loss that adapts based on trade duration and profit. Add trailing stop functionality with configurable parameters. Include ROI table configuration with multiple time-based profit targets. Ensure all exit conditions have proper tagging for later analysis.
+
+## 4. Strategy Optimization and Parameter Tuning [pending]
+### Dependencies: 3.1, 3.2, 3.3
+### Description: Implement hyperparameter optimization capabilities and conduct backtesting to tune the strategy parameters for optimal performance.
+### Details:
+Create hyperopt space methods for all configurable parameters. Implement custom hyperopt loss functions focusing on risk-adjusted returns. Conduct backtesting across multiple market conditions (bull, bear, sideways) using historical data. Document optimal parameter sets for different market conditions. Create performance analysis reports comparing Sharpe ratio, Calmar ratio, maximum drawdown, and win rate against benchmark strategies. Implement walk-forward optimization to prevent overfitting.
+

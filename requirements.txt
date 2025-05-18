@@ -1,0 +1,30 @@
+# 기본 패키지
+python-dotenv==1.0.0
+pyyaml==6.0
+requests==2.31.0
+aiohttp==3.8.5
+
+# 데이터 처리
+pandas==2.0.3
+numpy==1.24.4
+python-dateutil==2.8.2
+
+# 데이터베이스
+influxdb-client==1.36.1
+redis==4.6.0
+
+# 암호화폐 API
+ccxt==3.1.54
+
+# Vault 통합
+hvac==1.1.1
+
+# 시스템 모니터링
+psutil==5.9.5
+
+# 로깅
+structlog==23.1.0
+
+# 테스트
+pytest==7.4.0
+pytest-asyncio==0.21.1
