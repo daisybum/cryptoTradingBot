@@ -22,6 +22,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Poetry 설치
 RUN pip install --no-cache-dir poetry==1.5.1
 
+# TA-Lib 설치 (기술적 분석 라이브러리) - 먼저 설치
+RUN curl -L -o /tmp/ta-lib-0.4.0-src.tar.gz http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+    && tar -xzf /tmp/ta-lib-0.4.0-src.tar.gz -C /tmp \
+    && cd /tmp/ta-lib \
+    && ./configure --prefix=/usr \
+    && make \
+    && make install \
+    && rm -rf /tmp/ta-lib-0.4.0-src.tar.gz /tmp/ta-lib
+
 # Poetry 구성: 가상 환경 생성하지 않음
 RUN poetry config virtualenvs.create false
 
@@ -30,16 +39,6 @@ COPY pyproject.toml poetry.lock* ./
 
 # 종속성 설치 (--no-root: 프로젝트 자체는 설치하지 않음)
 RUN poetry install --no-interaction --no-ansi --no-root --only main
-
-# TA-Lib 설치 (기술적 분석 라이브러리)
-RUN curl -L -o /tmp/ta-lib-0.4.0-src.tar.gz http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
-    && tar -xzf /tmp/ta-lib-0.4.0-src.tar.gz -C /tmp \
-    && cd /tmp/ta-lib \
-    && ./configure --prefix=/usr \
-    && make \
-    && make install \
-    && rm -rf /tmp/ta-lib-0.4.0-src.tar.gz /tmp/ta-lib \
-    && pip install --no-cache-dir ta-lib
 
 # 실행 스테이지
 FROM python:3.11-slim
@@ -67,7 +66,9 @@ COPY . .
 
 # 로그 및 데이터 디렉토리 생성
 RUN mkdir -p /app/logs /app/data \
-    && chown -R nasos:nasos /app
+    && chown -R nasos:nasos /app \
+    && chmod -R 777 /app/logs \
+    && chmod -R 777 /app/data
 
 # 보안: 루트가 아닌 사용자로 전환
 USER nasos
@@ -77,9 +78,23 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PATH="/home/nasos/.local/bin:$PATH"
 
+# 환경 변수 파일 복사
+COPY config/env/project.env /app/config/env/project.env
+
+# 환경 변수 파일 로드
+RUN if [ -f /app/config/env/project.env ]; then \
+    grep -v '^#' /app/config/env/project.env | grep -v '^$' | sed 's/^/export /' > /app/.env_vars && \
+    chmod +x /app/.env_vars; \
+    fi
+
 # 헬스체크
 HEALTHCHECK --interval=60s --timeout=10s --start-period=30s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8080/api/v1/health')" || exit 1
 
-# 기본 명령
+# 진입점 스크립트 설정
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
+
+# 진입점 스크립트를 기본 명령으로 사용
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 CMD ["python", "-m", "src.main"]

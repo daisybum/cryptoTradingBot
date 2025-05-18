@@ -7,20 +7,20 @@ services:
     container_name: nasos-vault
     restart: unless-stopped
     ports:
-      - "8200:8200"
+      - "8202:8200"
     volumes:
       - vault-data:/vault/data
-      - ./config/vault/config.hcl:/vault/config/config.hcl:ro
-      - ./config/vault:/vault/config
     cap_add:
       - IPC_LOCK
     environment:
-      - VAULT_ADDR=http://0.0.0.0:8200
-      - VAULT_DEV_ROOT_TOKEN_ID=root
+      - VAULT_ADDR=${VAULT_ADDR:-http://0.0.0.0:8200}
+      - VAULT_DEV_ROOT_TOKEN_ID=${VAULT_TOKEN:-root}
       - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
-    command: server -config=/vault/config/config.hcl
+    command: server -dev
     networks:
       - nasos-network
+    env_file:
+      - config/env/project.env
     healthcheck:
       test: ["CMD", "vault", "status"]
       interval: 30s
@@ -30,6 +30,7 @@ services:
 
   # Cloudflare SSL 인증서 관리자
   cloudflare-companion:
+    profiles: ["production"]  # production 프로필로만 실행
     image: oznu/cloudflare-companion:latest
     container_name: nasos-cloudflare
     restart: unless-stopped
@@ -60,6 +61,7 @@ services:
     volumes:
       - ./config:/app/config
       - ./logs:/app/logs
+      - ./src:/app/src
       - ./data:/app/data
     environment:
       - PYTHONUNBUFFERED=1
@@ -118,6 +120,7 @@ services:
     volumes:
       - ./config:/app/config
       - ./logs:/app/logs
+      - ./src:/app/src
     environment:
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=INFO
@@ -148,6 +151,7 @@ services:
     volumes:
       - ./config:/app/config
       - ./logs:/app/logs
+      - ./src:/app/src
     environment:
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=INFO
@@ -189,15 +193,17 @@ services:
     image: influxdb:2.7-alpine
     container_name: nasos-influxdb
     restart: unless-stopped
+    ports:
+      - "8087:8086"
     volumes:
       - influxdb-data:/var/lib/influxdb2
     environment:
       - DOCKER_INFLUXDB_INIT_MODE=setup
       - DOCKER_INFLUXDB_INIT_USERNAME=admin
-      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_ADMIN_PASSWORD:-admin_password}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_ADMIN_PASSWORD:-Iuss1256!@}
       - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG:-nasos_org}
       - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET:-market_data}
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN:-token}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN:-Iuss1256!@}
     networks:
       - nasos-network
     healthcheck:
@@ -215,6 +221,8 @@ services:
     volumes:
       - redis-data:/data
     command: redis-server --appendonly yes
+    env_file:
+      - config/env/project.env
     networks:
       - nasos-network
     healthcheck:
@@ -260,6 +268,8 @@ services:
     command: tunnel run
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    env_file:
+      - config/env/project.env
     networks:
       - nasos-network
     profiles:
@@ -267,6 +277,45 @@ services:
     depends_on:
       - grafana
       - api-server
+
+  # 데이터 수집 서비스 (향상된 오류 처리 기능 포함)
+  data-collector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nasos-bot:latest
+    container_name: nasos-data-collector
+    restart: unless-stopped
+    command: python -m src.data_collection.resilient_service
+    depends_on:
+      - influxdb
+      - postgres
+      - redis
+      - vault
+    volumes:
+      - ./config:/app/config
+      - ./logs:/app/logs
+      - ./scripts:/app/scripts
+      - ./src:/app/src
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=DEBUG
+      - SERVICE=data_collector
+      - TEST_MODE=false
+      - LOCAL_TEST=false
+      - RETRY_INTERVAL=30
+      - MAX_RETRIES=15
+      - TEST_CONFIG_PATH=/app/config/test_mode.json
+    env_file:
+      - config/env/project.env
+    networks:
+      - nasos-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os; exit(0 if os.path.exists('/app/logs/resilient_collector_' + __import__('datetime').datetime.now().strftime('%Y%m%d') + '.log') else 1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
 networks:
   nasos-network:
