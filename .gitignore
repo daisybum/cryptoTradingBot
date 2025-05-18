@@ -42,9 +42,10 @@ coverage.xml
 .env.*
 *.env
 .venv
-# env/
+env/
 venv/
 ENV/
+config/env/
 
 # Docker
 .docker/
