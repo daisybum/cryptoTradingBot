@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리스크 관리 대시보드</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-header {
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: bold;
+        }
+        .status-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .status-active {
+            background-color: #dc3545;
+        }
+        .status-inactive {
+            background-color: #28a745;
+        }
+        .progress {
+            height: 20px;
+            margin-bottom: 10px;
+        }
+        .progress-bar-warning {
+            background-color: #ffc107;
+        }
+        .progress-bar-danger {
+            background-color: #dc3545;
+        }
+        .table th {
+            font-weight: bold;
+        }
+        .refresh-btn {
+            cursor: pointer;
+        }
+        #events-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .event-item {
+            padding: 10px;
+            border-left: 4px solid #007bff;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+        }
+        .event-warning {
+            border-left-color: #ffc107;
+        }
+        .event-danger {
+            border-left-color: #dc3545;
+        }
+        .event-success {
+            border-left-color: #28a745;
+        }
+        .event-timestamp {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-shield-lock"></i> 리스크 관리 대시보드
+            </a>
+            <button class="refresh-btn btn btn-outline-light btn-sm" id="refresh-data">
+                <i class="bi bi-arrow-clockwise"></i> 새로고침
+            </button>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <i class="bi bi-shield-exclamation"></i> 리스크 상태
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <div>
+                                <h5>킬 스위치</h5>
+                                <div>
+                                    <span class="status-indicator" id="kill-switch-status"></span>
+                                    <span id="kill-switch-text"></span>
+                                </div>
+                            </div>
+                            <div>
+                                <h5>서킷 브레이커</h5>
+                                <div>
+                                    <span class="status-indicator" id="circuit-breaker-status"></span>
+                                    <span id="circuit-breaker-text"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <h5>드로다운 상태</h5>
+                            <div class="progress">
+                                <div class="progress-bar" id="drawdown-progress" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <small>현재: <span id="current-drawdown">0%</span></small>
+                                <small>최대 허용: <span id="max-drawdown">0%</span></small>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <h5>일일 거래 제한</h5>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" id="daily-trade-progress" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0/0</div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <small>현재: <span id="daily-trade-count">0</span></small>
+                                <small>최대 허용: <span id="daily-trade-limit">0</span></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-cash-coin"></i> 잔액 정보
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>현재 잔액</h5>
+                                <h3 id="current-balance">0.00</h3>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>최고 잔액</h5>
+                                <h3 id="peak-balance">0.00</h3>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <form id="balance-update-form">
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="balance-input" placeholder="새 잔액 입력" step="0.01">
+                                    <button class="btn btn-primary" type="submit">업데이트</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="bi bi-toggles"></i> 리스크 제어
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <button id="activate-kill-switch" class="btn btn-danger w-100 mb-2">
+                                    <i class="bi bi-power"></i> 킬 스위치 활성화
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button id="deactivate-kill-switch" class="btn btn-success w-100 mb-2">
+                                    <i class="bi bi-power"></i> 킬 스위치 비활성화
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button id="check-circuit-breaker" class="btn btn-warning w-100 mb-2">
+                                    <i class="bi bi-lightning"></i> 서킷 브레이커 검사
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button id="reset-circuit-breaker" class="btn btn-info w-100 mb-2">
+                                    <i class="bi bi-arrow-counterclockwise"></i> 서킷 브레이커 재설정
+                                </button>
+                            </div>
+                        </div>
+                        <hr>
+                        <h5>거래 검사</h5>
+                        <form id="trade-check-form">
+                            <div class="mb-3">
+                                <label for="pair-input" class="form-label">거래 페어</label>
+                                <input type="text" class="form-control" id="pair-input" placeholder="예: BTC/USDT">
+                            </div>
+                            <div class="mb-3">
+                                <label for="side-select" class="form-label">매수/매도</label>
+                                <select class="form-select" id="side-select">
+                                    <option value="buy">매수</option>
+                                    <option value="sell">매도</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="amount-input" class="form-label">수량</label>
+                                <input type="number" class="form-control" id="amount-input" placeholder="0.001" step="0.001">
+                            </div>
+                            <div class="mb-3">
+                                <label for="price-input" class="form-label">가격 (선택사항)</label>
+                                <input type="number" class="form-control" id="price-input" placeholder="0.00" step="0.01">
+                            </div>
+                            <button type="submit" class="btn btn-primary">거래 검사</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <i class="bi bi-list-ul"></i> 리스크 이벤트 로그
+                    </div>
+                    <div class="card-body">
+                        <div id="events-container">
+                            <!-- 이벤트 로그가 여기에 동적으로 추가됩니다 -->
+                            <div class="text-center text-muted">
+                                이벤트 로그가 없습니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // API 엔드포인트
+        const API_BASE_URL = '/api';
+
+        // 페이지 로드 시 데이터 가져오기
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchRiskStatus();
+            
+            // 이벤트 리스너 등록
+            document.getElementById('refresh-data').addEventListener('click', fetchRiskStatus);
+            document.getElementById('balance-update-form').addEventListener('submit', updateBalance);
+            document.getElementById('activate-kill-switch').addEventListener('click', activateKillSwitch);
+            document.getElementById('deactivate-kill-switch').addEventListener('click', deactivateKillSwitch);
+            document.getElementById('check-circuit-breaker').addEventListener('click', checkCircuitBreaker);
+            document.getElementById('reset-circuit-breaker').addEventListener('click', resetCircuitBreaker);
+            document.getElementById('trade-check-form').addEventListener('submit', checkTrade);
+            
+            // 주기적으로 상태 업데이트 (10초마다)
+            setInterval(fetchRiskStatus, 10000);
+        });
+
+        // 리스크 상태 가져오기
+        async function fetchRiskStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/status`);
+                const data = await response.json();
+                
+                // 상태 표시 업데이트
+                updateStatusIndicators(data);
+                
+                // 드로다운 프로그레스바 업데이트
+                updateDrawdownProgress(data);
+                
+                // 일일 거래 제한 프로그레스바 업데이트
+                updateDailyTradeProgress(data);
+                
+                // 잔액 정보 업데이트
+                updateBalanceInfo(data);
+                
+                console.log('리스크 상태 업데이트됨:', data);
+            } catch (error) {
+                console.error('리스크 상태 가져오기 실패:', error);
+                addEventLog('오류', '리스크 상태 가져오기 실패: ' + error.message, 'danger');
+            }
+        }
+
+        // 상태 표시기 업데이트
+        function updateStatusIndicators(data) {
+            // 킬 스위치 상태
+            const killSwitchStatus = document.getElementById('kill-switch-status');
+            const killSwitchText = document.getElementById('kill-switch-text');
+            
+            if (data.kill_switch_active) {
+                killSwitchStatus.className = 'status-indicator status-active';
+                killSwitchText.textContent = '활성화됨';
+                killSwitchText.className = 'text-danger';
+            } else {
+                killSwitchStatus.className = 'status-indicator status-inactive';
+                killSwitchText.textContent = '비활성화됨';
+                killSwitchText.className = 'text-success';
+            }
+            
+            // 서킷 브레이커 상태
+            const circuitBreakerStatus = document.getElementById('circuit-breaker-status');
+            const circuitBreakerText = document.getElementById('circuit-breaker-text');
+            
+            if (data.circuit_breaker_active) {
+                circuitBreakerStatus.className = 'status-indicator status-active';
+                circuitBreakerText.textContent = '활성화됨';
+                circuitBreakerText.className = 'text-danger';
+            } else {
+                circuitBreakerStatus.className = 'status-indicator status-inactive';
+                circuitBreakerText.textContent = '비활성화됨';
+                circuitBreakerText.className = 'text-success';
+            }
+        }
+
+        // 드로다운 프로그레스바 업데이트
+        function updateDrawdownProgress(data) {
+            const drawdownProgress = document.getElementById('drawdown-progress');
+            const currentDrawdown = document.getElementById('current-drawdown');
+            const maxDrawdown = document.getElementById('max-drawdown');
+            
+            const drawdownPercent = data.current_drawdown * 100;
+            const maxDrawdownPercent = data.max_drawdown * 100;
+            
+            // 프로그레스바 업데이트
+            drawdownProgress.style.width = `${drawdownPercent}%`;
+            drawdownProgress.textContent = `${drawdownPercent.toFixed(2)}%`;
+            
+            // 색상 설정 (경고 임계값에 따라)
+            if (drawdownPercent >= maxDrawdownPercent * 0.8) {
+                drawdownProgress.className = 'progress-bar progress-bar-danger';
+            } else if (drawdownPercent >= maxDrawdownPercent * 0.5) {
+                drawdownProgress.className = 'progress-bar progress-bar-warning';
+            } else {
+                drawdownProgress.className = 'progress-bar bg-success';
+            }
+            
+            // 텍스트 업데이트
+            currentDrawdown.textContent = `${drawdownPercent.toFixed(2)}%`;
+            maxDrawdown.textContent = `${maxDrawdownPercent.toFixed(2)}%`;
+        }
+
+        // 일일 거래 제한 프로그레스바 업데이트
+        function updateDailyTradeProgress(data) {
+            const dailyTradeProgress = document.getElementById('daily-trade-progress');
+            const dailyTradeCount = document.getElementById('daily-trade-count');
+            const dailyTradeLimit = document.getElementById('daily-trade-limit');
+            
+            const tradeCount = data.daily_trade_count;
+            const tradeLimit = data.daily_trade_limit;
+            const tradePercent = (tradeCount / tradeLimit) * 100;
+            
+            // 프로그레스바 업데이트
+            dailyTradeProgress.style.width = `${tradePercent}%`;
+            dailyTradeProgress.textContent = `${tradeCount}/${tradeLimit}`;
+            
+            // 색상 설정 (경고 임계값에 따라)
+            if (tradePercent >= 90) {
+                dailyTradeProgress.className = 'progress-bar bg-danger';
+            } else if (tradePercent >= 70) {
+                dailyTradeProgress.className = 'progress-bar bg-warning';
+            } else {
+                dailyTradeProgress.className = 'progress-bar bg-info';
+            }
+            
+            // 텍스트 업데이트
+            dailyTradeCount.textContent = tradeCount;
+            dailyTradeLimit.textContent = tradeLimit;
+        }
+
+        // 잔액 정보 업데이트
+        function updateBalanceInfo(data) {
+            const currentBalance = document.getElementById('current-balance');
+            const peakBalance = document.getElementById('peak-balance');
+            
+            currentBalance.textContent = data.current_balance.toFixed(2);
+            peakBalance.textContent = data.peak_balance.toFixed(2);
+        }
+
+        // 잔액 업데이트
+        async function updateBalance(event) {
+            event.preventDefault();
+            
+            const balanceInput = document.getElementById('balance-input');
+            const balance = parseFloat(balanceInput.value);
+            
+            if (isNaN(balance) || balance <= 0) {
+                addEventLog('오류', '유효한 잔액을 입력하세요', 'danger');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/balance`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ balance })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addEventLog('잔액 업데이트', `잔액이 ${balance.toFixed(2)}로 업데이트되었습니다`, 'success');
+                    fetchRiskStatus();
+                    balanceInput.value = '';
+                } else {
+                    addEventLog('오류', '잔액 업데이트 실패', 'danger');
+                }
+            } catch (error) {
+                console.error('잔액 업데이트 실패:', error);
+                addEventLog('오류', '잔액 업데이트 실패: ' + error.message, 'danger');
+            }
+        }
+
+        // 킬 스위치 활성화
+        async function activateKillSwitch() {
+            const reason = prompt('킬 스위치 활성화 이유를 입력하세요:', '수동 활성화');
+            
+            if (!reason) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/kill-switch/activate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ reason })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addEventLog('킬 스위치', `킬 스위치가 활성화되었습니다. 이유: ${reason}`, 'danger');
+                    fetchRiskStatus();
+                } else {
+                    addEventLog('오류', '킬 스위치 활성화 실패', 'danger');
+                }
+            } catch (error) {
+                console.error('킬 스위치 활성화 실패:', error);
+                addEventLog('오류', '킬 스위치 활성화 실패: ' + error.message, 'danger');
+            }
+        }
+
+        // 킬 스위치 비활성화
+        async function deactivateKillSwitch() {
+            const reason = prompt('킬 스위치 비활성화 이유를 입력하세요:', '수동 비활성화');
+            
+            if (!reason) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/kill-switch/deactivate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ reason })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addEventLog('킬 스위치', `킬 스위치가 비활성화되었습니다. 이유: ${reason}`, 'success');
+                    fetchRiskStatus();
+                } else {
+                    addEventLog('오류', '킬 스위치 비활성화 실패', 'danger');
+                }
+            } catch (error) {
+                console.error('킬 스위치 비활성화 실패:', error);
+                addEventLog('오류', '킬 스위치 비활성화 실패: ' + error.message, 'danger');
+            }
+        }
+
+        // 서킷 브레이커 검사
+        async function checkCircuitBreaker() {
+            const priceChange = prompt('가격 변동 비율을 입력하세요 (예: -0.05 = -5%):', '-0.05');
+            
+            if (!priceChange) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/circuit-breaker/check`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ price_change: parseFloat(priceChange) })
+                });
+                
+                const data = await response.json();
+                
+                if (data.triggered) {
+                    addEventLog('서킷 브레이커', `서킷 브레이커가 발동되었습니다. 가격 변동: ${(data.price_change * 100).toFixed(2)}%`, 'warning');
+                } else {
+                    addEventLog('서킷 브레이커', `서킷 브레이커가 발동되지 않았습니다. 가격 변동: ${(data.price_change * 100).toFixed(2)}%`, 'info');
+                }
+                
+                fetchRiskStatus();
+            } catch (error) {
+                console.error('서킷 브레이커 검사 실패:', error);
+                addEventLog('오류', '서킷 브레이커 검사 실패: ' + error.message, 'danger');
+            }
+        }
+
+        // 서킷 브레이커 재설정
+        async function resetCircuitBreaker() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/circuit-breaker/reset`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addEventLog('서킷 브레이커', '서킷 브레이커가 재설정되었습니다', 'success');
+                    fetchRiskStatus();
+                } else {
+                    addEventLog('오류', '서킷 브레이커 재설정 실패', 'danger');
+                }
+            } catch (error) {
+                console.error('서킷 브레이커 재설정 실패:', error);
+                addEventLog('오류', '서킷 브레이커 재설정 실패: ' + error.message, 'danger');
+            }
+        }
+
+        // 거래 검사
+        async function checkTrade(event) {
+            event.preventDefault();
+            
+            const pair = document.getElementById('pair-input').value;
+            const side = document.getElementById('side-select').value;
+            const amount = parseFloat(document.getElementById('amount-input').value);
+            const price = parseFloat(document.getElementById('price-input').value) || null;
+            
+            if (!pair || isNaN(amount) || amount <= 0) {
+                addEventLog('오류', '유효한 거래 정보를 입력하세요', 'danger');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/check-trade`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ pair, side, amount, price })
+                });
+                
+                const data = await response.json();
+                
+                if (data.allowed) {
+                    addEventLog('거래 검사', `거래가 허용됨: ${pair} ${side} ${amount}`, 'success');
+                } else {
+                    addEventLog('거래 검사', `거래가 거부됨: ${pair} ${side} ${amount}. 이유: ${data.reason}`, 'warning');
+                }
+            } catch (error) {
+                console.error('거래 검사 실패:', error);
+                addEventLog('오류', '거래 검사 실패: ' + error.message, 'danger');
+            }
+        }
+
+        // 이벤트 로그 추가
+        function addEventLog(title, message, type = 'info') {
+            const eventsContainer = document.getElementById('events-container');
+            
+            // 빈 메시지 제거
+            const emptyMessage = eventsContainer.querySelector('.text-muted');
+            if (emptyMessage) {
+                eventsContainer.removeChild(emptyMessage);
+            }
+            
+            // 새 이벤트 항목 생성
+            const eventItem = document.createElement('div');
+            eventItem.className = `event-item event-${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            
+            eventItem.innerHTML = `
+                <div class="d-flex justify-content-between">
+                    <strong>${title}</strong>
+                    <span class="event-timestamp">${timestamp}</span>
+                </div>
+                <div>${message}</div>
+            `;
+            
+            // 컨테이너 맨 위에 추가
+            eventsContainer.insertBefore(eventItem, eventsContainer.firstChild);
+            
+            // 최대 20개 이벤트만 유지
+            const events = eventsContainer.querySelectorAll('.event-item');
+            if (events.length > 20) {
+                eventsContainer.removeChild(events[events.length - 1]);
+            }
+        }
+    </script>
+</body>
+</html>
