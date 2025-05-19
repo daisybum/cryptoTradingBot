@@ -7,11 +7,14 @@
 import logging
 import asyncio
 import json
+import os
 from typing import Dict, Any, Optional, List
 from datetime import datetime
 
-from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Query, Path
+from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Query, Path, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
 
 from src.risk_manager.risk_manager import get_risk_manager, init_risk_manager
@@ -88,15 +91,15 @@ async def get_risk_manager_dependency():
         raise HTTPException(status_code=500, detail="리스크 관리자가 초기화되지 않았습니다")
     return risk_manager
 
+# 대시보드 UI 템플릿
+templates_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+templates = Jinja2Templates(directory=templates_dir)
+
 # API 라우트 정의
-@app.get("/", tags=["일반"])
-async def root():
-    """API 루트 경로"""
-    return {
-        "message": "리스크 관리 API 서버",
-        "version": "1.0.0",
-        "documentation": "/docs"
-    }
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    """대시보드 UI를 제공하는 루트 엔드포인트"""
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/status", response_model=RiskStatus, tags=["상태"])
 async def get_status(risk_manager = Depends(get_risk_manager_dependency)):
