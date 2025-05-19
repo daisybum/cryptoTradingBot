@@ -45,7 +45,6 @@ coverage.xml
 env/
 venv/
 ENV/
-config/env/
 
 # Docker
 .docker/
@@ -94,3 +93,9 @@ grafana/data/
 
 # InfluxDB
 influxdb/data/
+
+# data
+data/
+user_data/data/
+user_data/data/*
+user_data/backtest_results

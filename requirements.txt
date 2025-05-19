@@ -12,9 +12,14 @@ python-dateutil==2.8.2
 # 데이터베이스
 influxdb-client==1.36.1
 redis==4.6.0
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+alembic==1.12.1
 
 # 암호화폐 API
 ccxt==3.1.54
+python-binance==1.0.16
+websocket-client==1.6.1
 
 # Vault 통합
 hvac==1.1.1
