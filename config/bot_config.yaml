@@ -1,0 +1,10 @@
+notifications:
+  enabled: true
+  level: info
+risk:
+  max_drawdown: 10.0
+  trade_risk: 1.0
+trading:
+  max_open_trades: 3
+  mode: dry-run
+  stake_amount: 100
