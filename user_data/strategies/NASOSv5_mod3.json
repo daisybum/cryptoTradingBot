@@ -1,0 +1,45 @@
+{
+  "strategy_name": "NASOSv5_mod3",
+  "params": {
+    "roi": {
+      "0": 10
+    },
+    "stoploss": {
+      "stoploss": -0.15
+    },
+    "trailing": {
+      "trailing_stop": false,
+      "trailing_stop_positive": null,
+      "trailing_stop_positive_offset": 0.0,
+      "trailing_only_offset_is_reached": false
+    },
+    "max_open_trades": {
+      "max_open_trades": 5
+    },
+    "buy": {
+      "buy_ma_type": "EMA",
+      "lookback_candles": 7,
+      "rsi_buy": 44,
+      "rsi_fast_buy": 30,
+      "base_nb_candles_buy": 20,
+      "ewo_high": 1.711,
+      "ewo_high_2": -3.861,
+      "ewo_low": -15.642,
+      "low_offset": 1.11,
+      "low_offset_2": 0.579,
+      "profit_threshold": 0.944
+    },
+    "sell": {
+      "high_offset": 1.456,
+      "high_offset_2": 1.39,
+      "pHSL": -0.149,
+      "pPF_1": 0.027,
+      "pPF_2": 0.052,
+      "pSL_1": 0.039,
+      "pSL_2": 0.072
+    },
+    "protection": {}
+  },
+  "ft_stratparam_v": 1,
+  "export_time": "2025-05-23 08:16:39.019057+00:00"
+}
