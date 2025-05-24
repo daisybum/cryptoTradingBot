@@ -100,3 +100,7 @@ data/
 user_data/data/
 user_data/data/*
 user_data/backtest_results
+
+# External libraries
+ta-lib-0.6.4/
+ta-lib/
