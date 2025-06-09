@@ -9,7 +9,7 @@ import os
 from typing import Dict, Any, Optional
 from urllib.parse import quote_plus
 
-from sqlalchemy import create_engine, Engine
+# DEAD CODE: from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.ext.declarative import declarative_base
 from influxdb_client import InfluxDBClient
@@ -94,7 +94,7 @@ class DatabaseManager:
             self.influx_query_api = self.influx_client.query_api()
             
             # 기본 버킷 설정
-            self.default_bucket = bucket
+# DEAD CODE:             self.default_bucket = bucket
             
             logger.info(f"InfluxDB 연결 설정됨: {url}, 조직: {org}, 버킷: {bucket}")
             
@@ -115,7 +115,7 @@ class DatabaseManager:
         
         return self.pg_session_factory()
     
-    def get_influx_write_api(self):
+# DEAD CODE:     def get_influx_write_api(self):
         """
         InfluxDB 쓰기 API 가져오기
         
@@ -127,7 +127,7 @@ class DatabaseManager:
         
         return self.influx_write_api
     
-    def get_influx_query_api(self):
+# DEAD CODE:     def get_influx_query_api(self):
         """
         InfluxDB 쿼리 API 가져오기
         

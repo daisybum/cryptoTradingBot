@@ -178,7 +178,7 @@ class OrderRepository(BaseRepository):
             logger.error(f"체결된 주문 조회 실패: {e}")
             return []
     
-    def get_order_by_client_id(self, client_order_id: str) -> Optional[Order]:
+# DEAD CODE:     def get_order_by_client_id(self, client_order_id: str) -> Optional[Order]:
         """
         클라이언트 ID로 주문 조회
         
@@ -201,7 +201,7 @@ class OrderRepository(BaseRepository):
             logger.error(f"클라이언트 ID로 주문 조회 실패: {e}")
             raise
     
-    def get_order_by_exchange_id(self, exchange_order_id: str) -> Optional[Order]:
+# DEAD CODE:     def get_order_by_exchange_id(self, exchange_order_id: str) -> Optional[Order]:
         """
         거래소 ID로 주문 조회
         
@@ -224,7 +224,7 @@ class OrderRepository(BaseRepository):
             logger.error(f"거래소 ID로 주문 조회 실패: {e}")
             raise
     
-    def get_orders_by_status(self, status: Union[OrderStatus, str], symbol: Optional[str] = None) -> List[Order]:
+# DEAD CODE:     def get_orders_by_status(self, status: Union[OrderStatus, str], symbol: Optional[str] = None) -> List[Order]:
         """
         상태별 주문 조회
         
@@ -295,7 +295,7 @@ class OrderRepository(BaseRepository):
             logger.error(f"미체결 주문 조회 실패: {e}")
             raise
     
-    def get_orders_by_symbol(self, symbol: str, limit: int = 100) -> List[Order]:
+# DEAD CODE:     def get_orders_by_symbol(self, symbol: str, limit: int = 100) -> List[Order]:
         """
         심볼별 주문 조회
         
@@ -445,7 +445,7 @@ class OrderRepository(BaseRepository):
             logger.error(f"오류 추가 실패: {e}")
             raise
     
-    def get_order_statistics(self, symbol: Optional[str] = None, days: int = 30) -> Dict[str, Any]:
+# DEAD CODE:     def get_order_statistics(self, symbol: Optional[str] = None, days: int = 30) -> Dict[str, Any]:
         """
         주문 통계 조회
         
@@ -559,7 +559,7 @@ class IndicatorRepository(BaseRepository):
             logger.error(f"지표 스냅샷 생성 실패: {e}")
             raise
     
-    def get_snapshots(self, symbol: str, timeframe: Union[TimeFrame, str], 
+# DEAD CODE:     def get_snapshots(self, symbol: str, timeframe: Union[TimeFrame, str], 
                      start_time: Optional[datetime] = None, 
                      end_time: Optional[datetime] = None,
                      limit: int = 100) -> List[IndicatorSnapshot]:
@@ -751,7 +751,7 @@ class TradeSessionRepository(BaseRepository):
             logger.error(f"거래 세션 종료 실패: {e}")
             raise
     
-    def get_active_sessions(self) -> List[TradeSession]:
+# DEAD CODE:     def get_active_sessions(self) -> List[TradeSession]:
         """
         활성 거래 세션 조회
         
@@ -769,7 +769,7 @@ class TradeSessionRepository(BaseRepository):
             logger.error(f"활성 거래 세션 조회 실패: {e}")
             raise
     
-    def get_session_by_id(self, session_id: str) -> Optional[TradeSession]:
+# DEAD CODE:     def get_session_by_id(self, session_id: str) -> Optional[TradeSession]:
         """
         ID로 거래 세션 조회
         

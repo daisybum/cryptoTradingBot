@@ -172,7 +172,7 @@ class AsyncDataProcessor:
         }
         await self.add_item(item)
     
-    def set_validation_callback(self, callback: Callable[[List], bool]):
+# DEAD CODE:     def set_validation_callback(self, callback: Callable[[List], bool]):
         """
         데이터 유효성 검사 콜백 설정
         
@@ -181,7 +181,7 @@ class AsyncDataProcessor:
         """
         self.validation_callback = callback
     
-    def get_stats(self) -> Dict:
+# DEAD CODE:     def get_stats(self) -> Dict:
         """
         처리 통계 조회
         

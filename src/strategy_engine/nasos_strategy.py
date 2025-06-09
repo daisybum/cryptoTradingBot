@@ -183,7 +183,7 @@ class NASOSStrategy:
         
         return df
     
-    def calculate_custom_stoploss(self, current_profit: float) -> float:
+# DEAD CODE:     def calculate_custom_stoploss(self, current_profit: float) -> float:
         """
         Calculate custom stoploss based on current profit.
         
@@ -334,7 +334,7 @@ class NASOSStrategy:
         
         return results
     
-    def get_plot_config(self) -> Dict:
+# DEAD CODE:     def get_plot_config(self) -> Dict:
         """
         Get plotting configuration for the strategy.
         

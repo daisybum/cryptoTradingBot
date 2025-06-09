@@ -144,8 +144,7 @@ class StrategyManager:
         
         return {}
     
-    def evaluate_strategy(self, dataframes: Dict[str, pd.DataFrame], 
-                         strategy_name: str = None) -> Dict[str, Dict[str, Any]]:
+# DEAD CODE:     def evaluate_strategy(self, dataframes: Dict[str, pd.DataFrame], strategy_name: str = None) -> Dict[str, Dict[str, Any]]:
         """
         Evaluate a strategy on the given dataframes.
         

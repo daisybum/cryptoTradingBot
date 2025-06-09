@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+API 서버 메인 모듈 - FastAPI 애플리케이션 실행
+"""
+
+import uvicorn
+from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
+
+from src.api_server.routers import auth, trades, backtest, bot, parameters, performance
+from src.api_server.models.database import engine, Base
+from src.api_server.auth.auth import get_current_active_user
+
+# 데이터베이스 테이블 생성
+Base.metadata.create_all(bind=engine)
+
+# FastAPI 애플리케이션 생성
+app = FastAPI(
+    title="NASOS Trading Bot API",
+    description="암호화폐 트레이딩 봇 API 서버",
+    version="1.0.0",
+)
+
+# CORS 미들웨어 설정
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 프로덕션 환경에서는 특정 도메인만 허용하도록 수정 필요
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# 라우터 등록
+app.include_router(auth.router)
+app.include_router(trades.router)
+app.include_router(backtest.router)
+app.include_router(bot.router)
+app.include_router(parameters.router)
+app.include_router(performance.router)
+
+# 루트 경로 핸들러
+# DEAD CODE: @app.get("/", tags=["root"])
+async def root():
+    """
+    API 서버 루트 경로 핸들러
+    """
+    return {"message": "NASOS Trading Bot API 서버에 오신 것을 환영합니다!"}
+
+# 상태 확인 엔드포인트
+# DEAD CODE: @app.get("/api/v1/health", tags=["health"])
+async def health_check():
+    """
+    API 서버 상태 확인 엔드포인트
+    """
+    return {"status": "ok", "service": "api_server"}
+
+# 보호된 엔드포인트 예시
+# DEAD CODE: @app.get("/api/v1/protected", tags=["protected"])
+async def protected_route(current_user = Depends(get_current_active_user)):
+    """
+    인증이 필요한 보호된 엔드포인트 예시
+    """
+    return {"message": f"안녕하세요, {current_user.username}님! 이 엔드포인트는 보호되어 있습니다."}
+
+# 서버 실행 (직접 실행 시)
+if __name__ == "__main__":
+    uvicorn.run("src.api_server.main:app", host="0.0.0.0", port=8080, reload=True)

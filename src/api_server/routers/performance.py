@@ -24,7 +24,7 @@ router = APIRouter(
     responses={401: {"description": "Unauthorized"}},
 )
 
-@router.get("/metrics", response_model=PerformanceMetrics)
+# DEAD CODE: @router.get("/metrics", response_model=PerformanceMetrics)
 async def get_performance_metrics(
     timeframe: str = "all",
     strategy: Optional[str] = None,
@@ -94,7 +94,7 @@ async def get_performance_metrics(
         profit_percentage=profit_percentage
     )
 
-@router.get("/equity-curve")
+# DEAD CODE: @router.get("/equity-curve")
 async def get_equity_curve(
     timeframe: str = "all",
     strategy: Optional[str] = None,
@@ -144,7 +144,7 @@ async def get_equity_curve(
     
     return {"equity_curve": equity_curve}
 
-@router.get("/drawdown")
+# DEAD CODE: @router.get("/drawdown")
 async def get_drawdown(
     timeframe: str = "all",
     strategy: Optional[str] = None,
@@ -194,7 +194,7 @@ async def get_drawdown(
     
     return {"drawdown": drawdown}
 
-@router.get("/monthly-returns")
+# DEAD CODE: @router.get("/monthly-returns")
 async def get_monthly_returns(
     year: Optional[int] = None,
     strategy: Optional[str] = None,
@@ -233,7 +233,7 @@ async def get_monthly_returns(
     
     return {"monthly_returns": monthly_returns}
 
-@router.get("/win-loss-distribution")
+# DEAD CODE: @router.get("/win-loss-distribution")
 async def get_win_loss_distribution(
     timeframe: str = "all",
     strategy: Optional[str] = None,

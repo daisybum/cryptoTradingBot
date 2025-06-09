@@ -74,7 +74,7 @@ def setup_logging(log_level="INFO", log_file=None):
     return root_logger
 
 
-def get_logger(name):
+# DEAD CODE: def get_logger(name):
     """
     지정된 이름으로 로거를 가져옵니다.
 

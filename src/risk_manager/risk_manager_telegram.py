@@ -16,7 +16,7 @@ from src.notifications.telegram_bot import init_telegram_bot, get_telegram_bot
 # 로깅 설정
 logger = logging.getLogger(__name__)
 
-async def setup_telegram_integration():
+# DEAD CODE: async def setup_telegram_integration():
     """
     텔레그램 봇과 리스크 관리자 통합 설정
     
@@ -56,7 +56,7 @@ async def setup_telegram_integration():
     logger.info("텔레그램 봇과 리스크 관리자 통합이 설정되었습니다.")
     return True
 
-async def send_telegram_notification(title: str, message: str, level: str = "info") -> bool:
+# DEAD CODE: async def send_telegram_notification(title: str, message: str, level: str = "info") -> bool:
     """
     텔레그램 알림 전송
     
@@ -76,7 +76,7 @@ async def send_telegram_notification(title: str, message: str, level: str = "inf
     formatted_message = f"*{title}*\n{message}"
     return telegram_bot.send_message(formatted_message, level)
 
-async def send_telegram_trade_alert(trade_data: Dict[str, Any]) -> bool:
+# DEAD CODE: async def send_telegram_trade_alert(trade_data: Dict[str, Any]) -> bool:
     """
     텔레그램 거래 알림 전송
     
@@ -93,7 +93,7 @@ async def send_telegram_trade_alert(trade_data: Dict[str, Any]) -> bool:
     
     return telegram_bot.send_trade_alert(trade_data)
 
-async def send_daily_performance_report(performance_data: Dict[str, Any]) -> bool:
+# DEAD CODE: async def send_daily_performance_report(performance_data: Dict[str, Any]) -> bool:
     """
     일일 성능 보고서 알림 전송
     

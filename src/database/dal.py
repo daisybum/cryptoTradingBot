@@ -11,7 +11,7 @@ from datetime import datetime, date, timedelta
 from contextlib import contextmanager
 
 from sqlalchemy.orm import Session
-from sqlalchemy import func, and_, or_, desc, asc
+# DEAD CODE: from sqlalchemy import func, and_, or_, desc, asc
 from sqlalchemy.exc import SQLAlchemyError
 from influxdb_client import Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
@@ -84,7 +84,7 @@ class BaseDAL(Generic[T]):
             session.refresh(record)
             return record
     
-    def get_by_id(self, record_id: int) -> Optional[T]:
+# DEAD CODE:     def get_by_id(self, record_id: int) -> Optional[T]:
         """
         ID로 레코드 조회
         
@@ -97,7 +97,7 @@ class BaseDAL(Generic[T]):
         with self.get_session() as session:
             return session.query(self.model).filter(self.model.id == record_id).first()
     
-    def get_all(self, limit: int = 100, offset: int = 0) -> List[T]:
+# DEAD CODE:     def get_all(self, limit: int = 100, offset: int = 0) -> List[T]:
         """
         모든 레코드 조회
         
@@ -169,7 +169,7 @@ class TradeDAL(BaseDAL[Trade]):
     def __init__(self):
         super().__init__(Trade)
     
-    def get_by_trade_id(self, trade_id: str) -> Optional[Trade]:
+# DEAD CODE:     def get_by_trade_id(self, trade_id: str) -> Optional[Trade]:
         """
         거래 ID로 거래 조회
         
@@ -182,7 +182,7 @@ class TradeDAL(BaseDAL[Trade]):
         with self.get_session() as session:
             return session.query(Trade).filter(Trade.trade_id == trade_id).first()
     
-    def get_open_trades(self, strategy: Optional[str] = None) -> List[Trade]:
+# DEAD CODE:     def get_open_trades(self, strategy: Optional[str] = None) -> List[Trade]:
         """
         오픈된 거래 조회
         
@@ -226,7 +226,7 @@ class TradeDAL(BaseDAL[Trade]):
                 
             return query.order_by(Trade.open_time).all()
     
-    def get_trades_by_status(self, status: str, limit: int = 100) -> List[Trade]:
+# DEAD CODE:     def get_trades_by_status(self, status: str, limit: int = 100) -> List[Trade]:
         """
         상태별 거래 조회
         
@@ -242,7 +242,7 @@ class TradeDAL(BaseDAL[Trade]):
                 Trade.status == status
             ).order_by(desc(Trade.open_time)).limit(limit).all()
     
-    def get_profit_stats(self, strategy: Optional[str] = None, 
+# DEAD CODE:     def get_profit_stats(self, strategy: Optional[str] = None, 
                         pair: Optional[str] = None, 
                         start_date: Optional[datetime] = None,
                         end_date: Optional[datetime] = None) -> Dict[str, Any]:
@@ -327,7 +327,7 @@ class EquityCurveDAL(BaseDAL[EquityCurve]):
     def __init__(self):
         super().__init__(EquityCurve)
     
-    def get_latest_equity(self) -> Optional[EquityCurve]:
+# DEAD CODE:     def get_latest_equity(self) -> Optional[EquityCurve]:
         """
         최신 자산 곡선 데이터 조회
         
@@ -337,7 +337,7 @@ class EquityCurveDAL(BaseDAL[EquityCurve]):
         with self.get_session() as session:
             return session.query(EquityCurve).order_by(desc(EquityCurve.ts)).first()
     
-    def get_equity_by_date_range(self, start_date: datetime, end_date: datetime, 
+# DEAD CODE:     def get_equity_by_date_range(self, start_date: datetime, end_date: datetime, 
                                 session_id: Optional[str] = None) -> List[EquityCurve]:
         """
         날짜 범위로 자산 곡선 데이터 조회

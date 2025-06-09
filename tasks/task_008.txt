@@ -1,6 +1,6 @@
 # Task ID: 8
 # Title: Telegram Integration for Alerts and Commands
-# Status: pending
+# Status: done
 # Dependencies: 5
 # Priority: medium
 # Description: Implement Telegram bot for trade alerts, risk notifications, and remote commands

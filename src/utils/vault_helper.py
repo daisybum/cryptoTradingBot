@@ -54,7 +54,7 @@ logger.info(f"Vault 설정: URL={VAULT_URL}, 토큰={VAULT_TOKEN[:3]}*** (masked
 
 # 캐시 설정
 SECRET_CACHE = {}
-SECRET_CACHE_TTL = int(os.environ.get('SECRET_CACHE_TTL', '3600'))  # 초 단위
+# DEAD CODE: SECRET_CACHE_TTL = int(os.environ.get('SECRET_CACHE_TTL', '3600'))  # 초 단위
 
 
 class VaultClient:

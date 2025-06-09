@@ -210,7 +210,7 @@ class CloudflareManager:
             logger.error(f"DNS 레코드 업데이트 중 오류 발생: {e}")
             return None
     
-    def delete_dns_record(self, record_id: str) -> bool:
+# DEAD CODE:     def delete_dns_record(self, record_id: str) -> bool:
         """
         DNS 레코드 삭제
         
@@ -335,7 +335,7 @@ class CloudflareManager:
             logger.error(f"SSL 설정 업데이트 중 오류 발생: {e}")
             return None
 
-class SSLManager:
+# DEAD CODE: class SSLManager:
     """SSL/TLS 인증서 관리 클래스"""
     
     def __init__(self, cloudflare_api_token: str = None, cloudflare_zone_id: str = None):
@@ -365,7 +365,7 @@ class SSLManager:
         
         logger.debug("SSL 관리자 초기화 완료")
     
-    def setup_cloudflare_ssl(self, mode: str = 'strict') -> bool:
+# DEAD CODE:     def setup_cloudflare_ssl(self, mode: str = 'strict') -> bool:
         """
         Cloudflare SSL 설정
         
@@ -392,7 +392,7 @@ class SSLManager:
             logger.error(f"Cloudflare SSL 설정 중 오류 발생: {e}")
             return False
     
-    def verify_ssl_configuration(self) -> Dict[str, Any]:
+# DEAD CODE:     def verify_ssl_configuration(self) -> Dict[str, Any]:
         """
         SSL 구성 확인
         
@@ -495,7 +495,7 @@ class SSLManager:
             logger.error(f"공용 IP 주소 조회 중 오류 발생: {e}")
             return None
     
-    def setup_api_subdomain(self, proxied: bool = True) -> bool:
+# DEAD CODE:     def setup_api_subdomain(self, proxied: bool = True) -> bool:
         """
         API 서브도메인 설정
         
@@ -514,7 +514,7 @@ class SSLManager:
         # API 서브도메인 생성
         return self.create_subdomain("api", public_ip, proxied)
     
-    def setup_dashboard_subdomain(self, proxied: bool = True) -> bool:
+# DEAD CODE:     def setup_dashboard_subdomain(self, proxied: bool = True) -> bool:
         """
         대시보드 서브도메인 설정
         
@@ -533,7 +533,7 @@ class SSLManager:
         # 대시보드 서브도메인 생성
         return self.create_subdomain("dashboard", public_ip, proxied)
     
-    def list_subdomains(self) -> List[Dict[str, Any]]:
+# DEAD CODE:     def list_subdomains(self) -> List[Dict[str, Any]]:
         """
         서브도메인 목록 조회
         

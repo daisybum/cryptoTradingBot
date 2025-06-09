@@ -21,7 +21,7 @@ router = APIRouter(
     responses={401: {"description": "Unauthorized"}},
 )
 
-@router.get("/", response_model=List[ParameterResponse])
+# DEAD CODE: @router.get("/", response_model=List[ParameterResponse])
 async def get_parameters(
     strategy: Optional[str] = None,
     db: Session = Depends(get_db)
@@ -40,7 +40,7 @@ async def get_parameters(
     
     return parameters
 
-@router.get("/{parameter_id}", response_model=ParameterResponse)
+# DEAD CODE: @router.get("/{parameter_id}", response_model=ParameterResponse)
 async def get_parameter(parameter_id: int, db: Session = Depends(get_db)):
     """
     특정 파라미터 조회
@@ -57,7 +57,7 @@ async def get_parameter(parameter_id: int, db: Session = Depends(get_db)):
     
     return parameter
 
-@router.post("/", response_model=ParameterResponse)
+# DEAD CODE: @router.post("/", response_model=ParameterResponse)
 async def create_parameter(
     parameter: ParameterCreate,
     db: Session = Depends(get_db)
@@ -85,7 +85,7 @@ async def create_parameter(
     
     return db_parameter
 
-@router.put("/{parameter_id}", response_model=ParameterResponse)
+# DEAD CODE: @router.put("/{parameter_id}", response_model=ParameterResponse)
 async def update_parameter(
     parameter_id: int,
     parameter_update: ParameterUpdate,
@@ -113,7 +113,7 @@ async def update_parameter(
     
     return db_parameter
 
-@router.delete("/{parameter_id}")
+# DEAD CODE: @router.delete("/{parameter_id}")
 async def delete_parameter(parameter_id: int, db: Session = Depends(get_db)):
     """
     파라미터 삭제
@@ -178,7 +178,7 @@ async def get_strategy_parameters(
             detail=f"Failed to get strategy parameters: {str(e)}"
         )
 
-@router.put("/strategy/{strategy_name}")
+# DEAD CODE: @router.put("/strategy/{strategy_name}")
 async def update_strategy_parameters(
     strategy_name: str,
     parameters: Dict[str, str],

@@ -21,8 +21,8 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeEl
 from rich.prompt import Prompt, Confirm
 from rich.syntax import Syntax
 from rich.text import Text
-from rich.layout import Layout
-from rich.live import Live
+# DEAD CODE: from rich.layout import Layout
+# DEAD CODE: from rich.live import Live
 
 # 프로젝트 루트 경로를 Python 경로에 추가
 project_root = Path(__file__).parent.parent.parent.absolute()
@@ -50,7 +50,7 @@ class TradingBotCLI:
         self.telegram = None
         self.running = True
         self.config_path = project_root / "config" / "bot_config.yaml"
-        self.verbosity = "info"  # 기본 로깅 레벨
+# DEAD CODE:         self.verbosity = "info"  # 기본 로깅 레벨
         
         # 메뉴 옵션 정의
         self.menu_options = [
@@ -484,7 +484,7 @@ class TradingBotCLI:
         self.console.print(config_panel)
         
         # 설정 변경 옵션
-        options = [
+# DEAD CODE:         options = [
             "거래 모드 변경",
             "스테이크 금액 변경",
             "최대 오픈 거래 수 변경",
@@ -660,7 +660,7 @@ class TradingBotCLI:
         self.console.print(status_panel)
         
         # 리스크 관리 옵션
-        options = [
+# DEAD CODE:         options = [
             "리스크 관리자 활성화/비활성화",
             "킬 스위치 활성화/비활성화",
             "최대 드로다운 설정",
@@ -749,7 +749,7 @@ class TradingBotCLI:
         self.console.print(status_panel)
         
         # 알림 설정 옵션
-        options = [
+# DEAD CODE:         options = [
             "알림 활성화/비활성화",
             "알림 레벨 설정",
             "테스트 메시지 전송",

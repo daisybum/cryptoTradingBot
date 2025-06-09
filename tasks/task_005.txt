@@ -1,6 +1,6 @@
 # Task ID: 5
 # Title: Risk Management System
-# Status: pending
+# Status: done
 # Dependencies: 4
 # Priority: high
 # Description: Implement the risk management system with global drawdown protection, per-trade stop-loss, and stake sizing

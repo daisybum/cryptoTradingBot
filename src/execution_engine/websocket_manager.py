@@ -9,7 +9,7 @@ import logging
 import asyncio
 import json
 import time
-from typing import Dict, Any, Optional, List, Callable, Coroutine
+# DEAD CODE: from typing import Dict, Any, Optional, List, Callable, Coroutine
 import threading
 import queue
 from datetime import datetime, timedelta
@@ -42,7 +42,7 @@ class WebSocketManager:
         
         # WebSocket 관련 변수
         self.bsm = None  # BinanceSocketManager
-        self.user_socket = None  # 사용자 데이터 스트림 소켓
+# DEAD CODE:         self.user_socket = None  # 사용자 데이터 스트림 소켓
         self.conn_key = None  # 연결 키
         self.listen_key = None  # 리슨 키
         
@@ -289,7 +289,7 @@ class WebSocketManager:
             price = float(msg.get('p', 0))  # 주문 가격
             qty = float(msg.get('q', 0))  # 주문량
             filled_qty = float(msg.get('z', 0))  # 체결량
-            cummulative_quote_qty = float(msg.get('Z', 0))  # 체결 금액
+# DEAD CODE:             cummulative_quote_qty = float(msg.get('Z', 0))  # 체결 금액
             
             logger.info(f"주문 상태 업데이트: {symbol} {side} {status} - ID: {order_id}, 체결량: {filled_qty}/{qty}")
             
@@ -306,7 +306,7 @@ class WebSocketManager:
             msg: 계정 포지션 메시지
         """
         try:
-            event_time = msg.get('E')
+# DEAD CODE:             event_time = msg.get('E')
             balances = msg.get('B', [])
             
             for balance in balances:
@@ -443,7 +443,7 @@ class OrderTracker:
         except Exception as e:
             logger.exception(f"실행 엔진 업데이트 중 오류 발생: {e}")
     
-    def get_order_status(self, order_id: str) -> Optional[Dict[str, Any]]:
+# DEAD CODE:     def get_order_status(self, order_id: str) -> Optional[Dict[str, Any]]:
         """
         주문 상태 조회
         
@@ -455,7 +455,7 @@ class OrderTracker:
         """
         return self.tracked_orders.get(order_id)
     
-    def get_order_history(self, order_id: str) -> List[Dict[str, Any]]:
+# DEAD CODE:     def get_order_history(self, order_id: str) -> List[Dict[str, Any]]:
         """
         주문 업데이트 이력 조회
         

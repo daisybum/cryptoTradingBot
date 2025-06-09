@@ -18,7 +18,7 @@ import os
 from src.execution_engine.connector import BinanceConnector, setup_binance_connector
 from src.execution_engine.websocket_manager import WebSocketManager, OrderTracker
 from src.database.integration import TradingDataManager
-from src.database.models import OrderStatus as DBOrderStatus, OrderType as DBOrderType, OrderSide as DBOrderSide
+# DEAD CODE: # DEAD CODE: from src.database.models import OrderStatus as DBOrderStatus, OrderType as DBOrderType, OrderSide as DBOrderSide
 from src.risk_manager import RiskManager, init_risk_manager, get_risk_manager
 
 logger = logging.getLogger(__name__)
@@ -39,8 +39,8 @@ class OrderStatus(enum.Enum):
 class OrderType(enum.Enum):
     LIMIT = 'limit'           # 지정가 주문
     MARKET = 'market'         # 시장가 주문
-    STOP_LOSS = 'stop_loss'   # 손절매 주문
-    TAKE_PROFIT = 'take_profit'  # 이익 실현 주문
+# DEAD CODE:     STOP_LOSS = 'stop_loss'   # 손절매 주문
+# DEAD CODE:     TAKE_PROFIT = 'take_profit'  # 이익 실현 주문
 
 # 주문 방향 열거형
 class OrderSide(enum.Enum):
@@ -97,7 +97,7 @@ class ExecutionEngine:
         
         # WebSocket 관리자 초기화
         self.ws_manager = None
-        self.order_tracker = None
+# DEAD CODE:         self.order_tracker = None
         
         # 실제 거래 모드에서만 WebSocket 사용
         if not self.is_dry_run and self.order_settings['use_websocket']:
@@ -111,7 +111,7 @@ class ExecutionEngine:
                 
                 # WebSocket 관리자 초기화
                 self.ws_manager = WebSocketManager(api_key, api_secret, is_testnet=is_testnet)
-                self.order_tracker = OrderTracker(self.ws_manager, self)
+# DEAD CODE:                 self.order_tracker = OrderTracker(self.ws_manager, self)
                 
                 logger.info("WebSocket 관리자 초기화됨")
             else:

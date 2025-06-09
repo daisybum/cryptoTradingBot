@@ -11,7 +11,7 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 from enum import Enum
 
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, Text, ForeignKey, Index, JSON, Enum as SQLEnum
+# DEAD CODE: from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, Text, ForeignKey, Index, JSON, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSONB
 
@@ -35,8 +35,8 @@ class OrderType(str, Enum):
     """주문 유형 열거형"""
     LIMIT = 'limit'               # 지정가 주문
     MARKET = 'market'             # 시장가 주문
-    STOP_LOSS = 'stop_loss'       # 손절매 주문
-    TAKE_PROFIT = 'take_profit'   # 이익 실현 주문
+# DEAD CODE:     STOP_LOSS = 'stop_loss'       # 손절매 주문
+# DEAD CODE:     TAKE_PROFIT = 'take_profit'   # 이익 실현 주문
 
 class OrderSide(str, Enum):
     """주문 방향 열거형"""
@@ -45,13 +45,13 @@ class OrderSide(str, Enum):
 
 class TimeFrame(str, Enum):
     """시간 프레임 열거형"""
-    M1 = '1m'                     # 1분
-    M5 = '5m'                     # 5분
-    M15 = '15m'                   # 15분
-    M30 = '30m'                   # 30분
-    H1 = '1h'                     # 1시간
-    H4 = '4h'                     # 4시간
-    D1 = '1d'                     # 1일
+# DEAD CODE:     M1 = '1m'                     # 1분
+# DEAD CODE:     M5 = '5m'                     # 5분
+# DEAD CODE:     M15 = '15m'                   # 15분
+# DEAD CODE:     M30 = '30m'                   # 30분
+# DEAD CODE:     H1 = '1h'                     # 1시간
+# DEAD CODE:     H4 = '4h'                     # 4시간
+# DEAD CODE:     D1 = '1d'                     # 1일
 
 class Order(Base):
     """주문 모델"""
@@ -93,7 +93,7 @@ class Order(Base):
     # 관계
     fills = relationship("Fill", back_populates="order", cascade="all, delete-orphan")
     errors = relationship("OrderError", back_populates="order", cascade="all, delete-orphan")
-    child_orders = relationship("Order", backref=relationship("parent", remote_side=[order_id]))
+# DEAD CODE:     child_orders = relationship("Order", backref=relationship("parent", remote_side=[order_id]))
     
     # 인덱스
     __table_args__ = (

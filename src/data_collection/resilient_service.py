@@ -130,7 +130,7 @@ class ResilientDataCollector:
         self.use_mock_data = test_mode and test_config.get('use_mock_data', False)
         self.mock_data_config = test_config.get('mock_data', {})
         self.health_check_config = test_config.get('health_check', {})
-        self.performance_config = test_config.get('performance', {})
+# DEAD CODE:         self.performance_config = test_config.get('performance', {})
         
         # Initialize cache for fallback data
         self.data_cache = {}
@@ -549,7 +549,7 @@ class ResilientDataCollector:
         # For example:
         # self._store_to_influxdb(symbol, timeframe, data)
     
-    def _store_to_influxdb(self, symbol: str, timeframe: str, data: pd.DataFrame):
+# DEAD CODE:     def _store_to_influxdb(self, symbol: str, timeframe: str, data: pd.DataFrame):
         """
         Store OHLCV data to InfluxDB.
         
@@ -600,7 +600,7 @@ async def main():
         
         # 시그널 핸들러 등록
         for sig in [signal.SIGINT, signal.SIGTERM]:
-            signal.signal(sig, lambda s, f: asyncio.create_task(shutdown(collector)))
+# DEAD CODE:             signal.signal(sig, lambda s, f: asyncio.create_task(shutdown(collector)))
         
         # 데이터 수집기 시작
         await collector.start()

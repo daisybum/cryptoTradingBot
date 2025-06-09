@@ -67,7 +67,7 @@ class PerformanceVisualizer:
             trades_df['drawdown_pct'] = trades_df['drawdown'] / trades_df['max_equity'] * 100
             
             # 플롯 생성
-            fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), gridspec_kw={'height_ratios': [3, 1]})
+# DEAD CODE:             fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), gridspec_kw={'height_ratios': [3, 1]})
             
             # 자산 곡선 플롯
             ax1.plot(trades_df['close_time'], trades_df['equity'], label='Equity')
@@ -178,7 +178,7 @@ class PerformanceVisualizer:
             losing_trades = trades_df[trades_df['pnl'] <= 0]['pnl']
             
             # 플롯 생성
-            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+# DEAD CODE:             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
             
             # 승리 거래 히스토그램
             if not winning_trades.empty:

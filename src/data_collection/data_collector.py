@@ -88,8 +88,8 @@ class DataCollector:
         logger.info(f"InfluxDB 설정 사용: {self.influx_url}")
         
         # Docker 환경 설정 확인
-        self.docker_env = self.env.get('DOCKER_ENV', 'true').lower() == 'true'
-        self.local_test = self.env.get('LOCAL_TEST', 'false').lower() == 'true'
+# DEAD CODE:         self.docker_env = self.env.get('DOCKER_ENV', 'true').lower() == 'true'
+# DEAD CODE:         self.local_test = self.env.get('LOCAL_TEST', 'false').lower() == 'true'
         
         # 기존 코드와의 호환성을 위한 속성 추가
         self.bucket = self.influx_bucket
@@ -404,7 +404,7 @@ class DataCollector:
             logger.error(f"마지막 캔들 시간 조회 중 오류 발생: {e}")
             return None
     
-    async def _get_last_candle_from_db(self, symbol: str, timeframe: str) -> Optional[List]:
+# DEAD CODE:     async def _get_last_candle_from_db(self, symbol: str, timeframe: str) -> Optional[List]:
         """
         데이터베이스에서 마지막 캔들 가져오기
         

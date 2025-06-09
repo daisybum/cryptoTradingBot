@@ -25,7 +25,7 @@ router = APIRouter(
     responses={401: {"description": "Unauthorized"}},
 )
 
-@router.post("/token", response_model=Token)
+# DEAD CODE: @router.post("/token", response_model=Token)
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
@@ -50,7 +50,7 @@ async def login_for_access_token(
     
     return {"access_token": access_token, "token_type": "bearer"}
 
-@router.post("/register", response_model=UserResponse)
+# DEAD CODE: @router.post("/register", response_model=UserResponse)
 async def register_user(user: UserCreate, db: Session = Depends(get_db)):
     """
     새 사용자 등록

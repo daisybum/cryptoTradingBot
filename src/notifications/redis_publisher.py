@@ -92,7 +92,7 @@ class RedisPublisher:
             logger.error(f"알림 발행 실패: {e}")
             return False
     
-    def publish_trade_notification(self, data: Dict[str, Any]) -> bool:
+# DEAD CODE:     def publish_trade_notification(self, data: Dict[str, Any]) -> bool:
         """
         거래 알림 발행
         
@@ -104,7 +104,7 @@ class RedisPublisher:
         """
         return self.publish(NotificationChannel.TRADES, data)
     
-    def publish_order_notification(self, data: Dict[str, Any]) -> bool:
+# DEAD CODE:     def publish_order_notification(self, data: Dict[str, Any]) -> bool:
         """
         주문 알림 발행
         
@@ -116,7 +116,7 @@ class RedisPublisher:
         """
         return self.publish(NotificationChannel.ORDERS, data)
     
-    def publish_risk_notification(self, data: Dict[str, Any]) -> bool:
+# DEAD CODE:     def publish_risk_notification(self, data: Dict[str, Any]) -> bool:
         """
         리스크 알림 발행
         
@@ -128,7 +128,7 @@ class RedisPublisher:
         """
         return self.publish(NotificationChannel.RISK, data)
     
-    def publish_system_notification(self, data: Dict[str, Any]) -> bool:
+# DEAD CODE:     def publish_system_notification(self, data: Dict[str, Any]) -> bool:
         """
         시스템 알림 발행
         
@@ -140,7 +140,7 @@ class RedisPublisher:
         """
         return self.publish(NotificationChannel.SYSTEM, data)
     
-    def publish_performance_notification(self, data: Dict[str, Any]) -> bool:
+# DEAD CODE:     def publish_performance_notification(self, data: Dict[str, Any]) -> bool:
         """
         성능 알림 발행
         
@@ -152,7 +152,7 @@ class RedisPublisher:
         """
         return self.publish(NotificationChannel.PERFORMANCE, data)
     
-    def store_notification(self, data: Dict[str, Any], expiry: int = 86400) -> bool:
+# DEAD CODE:     def store_notification(self, data: Dict[str, Any], expiry: int = 86400) -> bool:
         """
         알림 저장
         
@@ -197,7 +197,7 @@ class RedisPublisher:
             logger.error(f"알림 저장 실패: {e}")
             return False
     
-    def get_recent_notifications(self, limit: int = 50) -> list:
+# DEAD CODE:     def get_recent_notifications(self, limit: int = 50) -> list:
         """
         최근 알림 가져오기
         

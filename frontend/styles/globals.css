@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-rgb: 15, 23, 42;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
+@layer components {
+  .card {
+    @apply bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 mb-6;
+  }
+  
+  .stats-grid {
+    @apply grid grid-cols-2 md:grid-cols-4 gap-4 mt-4;
+  }
+  
+  .stat-item {
+    @apply flex flex-col p-4 bg-gray-50 dark:bg-slate-700 rounded-lg;
+  }
+  
+  .stat-label {
+    @apply text-gray-500 dark:text-gray-400 text-sm font-medium;
+  }
+  
+  .stat-value {
+    @apply text-2xl font-bold mt-1;
+  }
+  
+  .status-active {
+    @apply text-green-600 dark:text-green-400;
+  }
+  
+  .status-paused {
+    @apply text-yellow-600 dark:text-yellow-400;
+  }
+  
+  .status-stopped {
+    @apply text-red-600 dark:text-red-400;
+  }
+  
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors;
+  }
+  
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark text-white;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary hover:bg-secondary-dark text-white;
+  }
+  
+  .btn-success {
+    @apply bg-success hover:bg-success-dark text-white;
+  }
+  
+  .btn-danger {
+    @apply bg-danger hover:bg-danger-dark text-white;
+  }
+}

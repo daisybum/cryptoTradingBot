@@ -57,7 +57,7 @@ class BacktestingFramework:
         logger.info(f"백테스팅 프레임워크 초기화됨 (설정: {config_path}, 데이터: {data_dir})")
         
         # 결과 저장을 위한 최근 백테스트 결과
-        self.latest_results = None
+# DEAD CODE:         self.latest_results = None
     
     def download_data(self, pairs: List[str], timeframes: List[str], 
                      start_date: str, end_date: str) -> bool:
@@ -165,7 +165,7 @@ class BacktestingFramework:
             backtest_results = self.parse_backtest_result(result.stdout)
             
             # 결과 저장
-            self.latest_results = backtest_results
+# DEAD CODE:             self.latest_results = backtest_results
             
             # 결과 로깅
             logger.info(f"백테스트 완료: {strategy}")

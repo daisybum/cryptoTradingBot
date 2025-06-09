@@ -24,7 +24,7 @@ router = APIRouter(
     responses={401: {"description": "Unauthorized"}},
 )
 
-@router.get("/results", response_model=List[BacktestResultResponse])
+# DEAD CODE: @router.get("/results", response_model=List[BacktestResultResponse])
 async def get_backtest_results(
     strategy: Optional[str] = None,
     start_date: Optional[datetime] = None,
@@ -57,7 +57,7 @@ async def get_backtest_results(
     
     return query.all()
 
-@router.get("/results/{result_id}", response_model=BacktestResultResponse)
+# DEAD CODE: @router.get("/results/{result_id}", response_model=BacktestResultResponse)
 async def get_backtest_result(result_id: int, db: Session = Depends(get_db)):
     """
     특정 백테스트 결과 조회
@@ -74,7 +74,7 @@ async def get_backtest_result(result_id: int, db: Session = Depends(get_db)):
     
     return result
 
-@router.post("/results", response_model=BacktestResultResponse)
+# DEAD CODE: @router.post("/results", response_model=BacktestResultResponse)
 async def create_backtest_result(
     result: BacktestResultCreate,
     db: Session = Depends(get_db)
@@ -90,7 +90,7 @@ async def create_backtest_result(
     
     return db_result
 
-@router.delete("/results/{result_id}")
+# DEAD CODE: @router.delete("/results/{result_id}")
 async def delete_backtest_result(result_id: int, db: Session = Depends(get_db)):
     """
     백테스트 결과 삭제
@@ -159,7 +159,7 @@ async def run_backtest(
             detail=f"Failed to run backtest: {str(e)}"
         )
 
-@router.post("/upload-result")
+# DEAD CODE: @router.post("/upload-result")
 async def upload_backtest_result(
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
@@ -213,7 +213,7 @@ async def upload_backtest_result(
             detail=f"Failed to upload backtest result: {str(e)}"
         )
 
-@router.get("/compare")
+# DEAD CODE: @router.get("/compare")
 async def compare_backtest_results(
     result_ids: List[int],
     db: Session = Depends(get_db)

@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from typing import Dict, List, Optional, Tuple, Any
 from datetime import datetime, timedelta
-import math
+# DEAD CODE: import math
 from enum import Enum
 
 # 로깅 설정
@@ -312,7 +312,7 @@ class PerformanceAnalyzer:
         annual_std = daily_returns['return'].std() * np.sqrt(365)
         
         # 일일 무위험 수익률
-        daily_risk_free_rate = self.risk_free_rate / 365
+# DEAD CODE:         daily_risk_free_rate = self.risk_free_rate / 365
         
         # Sharpe 비율 계산
         if annual_std == 0:

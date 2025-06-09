@@ -96,7 +96,7 @@ templates_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templa
 templates = Jinja2Templates(directory=templates_dir)
 
 # API 라우트 정의
-@app.get("/", response_class=HTMLResponse)
+# DEAD CODE: @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     """대시보드 UI를 제공하는 루트 엔드포인트"""
     return templates.TemplateResponse("index.html", {"request": request})
@@ -145,7 +145,7 @@ async def update_balance(balance_update: BalanceUpdate, risk_manager = Depends(g
         "drawdown_percentage": current_drawdown * 100
     }
 
-@app.post("/check-trade", tags=["거래"])
+# DEAD CODE: @app.post("/check-trade", tags=["거래"])
 async def check_trade(trade_check: TradeCheck, risk_manager = Depends(get_risk_manager_dependency)):
     """거래 허용 여부 검사"""
     result = await risk_manager.check_trade_allowed(
@@ -200,7 +200,7 @@ async def calculate_position_size(
         "current_balance": risk_manager.current_balance
     }
 
-@app.get("/positions", tags=["포지션"])
+# DEAD CODE: @app.get("/positions", tags=["포지션"])
 async def get_positions(risk_manager = Depends(get_risk_manager_dependency)):
     """현재 포지션 정보 조회"""
     positions = {}
@@ -290,7 +290,7 @@ async def check_circuit_breaker(request: CircuitBreakerCheck, risk_manager = Dep
         "circuit_breaker_active": risk_manager.circuit_breaker_active
     }
 
-@app.post("/circuit-breaker/reset", tags=["서킷 브레이커"])
+# DEAD CODE: @app.post("/circuit-breaker/reset", tags=["서킷 브레이커"])
 async def reset_circuit_breaker(risk_manager = Depends(get_risk_manager_dependency)):
     """서킷 브레이커 재설정"""
     risk_manager.circuit_breaker_active = False
@@ -334,7 +334,7 @@ async def update_balance(
     result = await risk_manager.update_balance(balance_update.balance)
     return {"success": result, "message": "잔액 업데이트됨"}
 
-@app.post("/trade/check", tags=["거래"])
+# DEAD CODE: @app.post("/trade/check", tags=["거래"])
 async def check_trade(
     trade_check: TradeCheck,
     risk_manager = Depends(get_risk_manager_dependency)
@@ -361,7 +361,7 @@ async def calculate_position_size(
     )
     return {"position_size": position_size}
 
-@app.post("/trade/increment", tags=["거래"])
+# DEAD CODE: @app.post("/trade/increment", tags=["거래"])
 async def increment_trade_count(
     trade_check: TradeCheck,
     risk_manager = Depends(get_risk_manager_dependency)
@@ -401,7 +401,7 @@ async def deactivate_kill_switch(
     await risk_manager.deactivate_kill_switch(request.reason)
     return {"success": True, "kill_switch_active": risk_manager.kill_switch_active}
 
-@app.post("/events/publish", tags=["이벤트"])
+# DEAD CODE: @app.post("/events/publish", tags=["이벤트"])
 async def publish_event(
     event: RiskEvent,
     risk_manager = Depends(get_risk_manager_dependency)
@@ -411,7 +411,7 @@ async def publish_event(
     return {"success": True, "event": event}
 
 # 서버 시작 이벤트
-@app.on_event("startup")
+# DEAD CODE: @app.on_event("startup")
 async def startup_event():
     """서버 시작 이벤트"""
     try:
@@ -437,7 +437,7 @@ async def startup_event():
         logger.error(f"리스크 관리자 초기화 실패: {e}")
 
 # 서버 종료 이벤트
-@app.on_event("shutdown")
+# DEAD CODE: @app.on_event("shutdown")
 async def shutdown_event():
     """서버 종료 이벤트"""
     risk_manager = get_risk_manager()

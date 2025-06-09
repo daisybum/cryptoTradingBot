@@ -93,7 +93,7 @@ class EnvLoader:
         
         return value
     
-    def get_int(self, key: str, default: int = 0) -> int:
+# DEAD CODE:     def get_int(self, key: str, default: int = 0) -> int:
         """
         정수 환경 변수 가져오기
         
@@ -115,7 +115,7 @@ class EnvLoader:
             logger.warning(f"환경 변수를 정수로 변환할 수 없습니다: {key}={value}")
             return default
     
-    def get_float(self, key: str, default: float = 0.0) -> float:
+# DEAD CODE:     def get_float(self, key: str, default: float = 0.0) -> float:
         """
         실수 환경 변수 가져오기
         
@@ -137,7 +137,7 @@ class EnvLoader:
             logger.warning(f"환경 변수를 실수로 변환할 수 없습니다: {key}={value}")
             return default
     
-    def get_bool(self, key: str, default: bool = False) -> bool:
+# DEAD CODE:     def get_bool(self, key: str, default: bool = False) -> bool:
         """
         불리언 환경 변수 가져오기
         

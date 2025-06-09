@@ -1,12 +1,6 @@
 {
   "strategy_name": "NASOSv5_mod3",
   "params": {
-    "roi": {
-      "0": 10
-    },
-    "stoploss": {
-      "stoploss": -0.15
-    },
     "trailing": {
       "trailing_stop": false,
       "trailing_stop_positive": null,
@@ -21,25 +15,34 @@
       "lookback_candles": 7,
       "rsi_buy": 44,
       "rsi_fast_buy": 30,
-      "base_nb_candles_buy": 20,
-      "ewo_high": 1.711,
-      "ewo_high_2": -3.861,
-      "ewo_low": -15.642,
-      "low_offset": 1.11,
-      "low_offset_2": 0.579,
-      "profit_threshold": 0.944
+      "base_nb_candles_buy": 29,
+      "ewo_high": 3.847,
+      "ewo_high_2": 8.101,
+      "ewo_low": -1.623,
+      "low_offset": 1.117,
+      "low_offset_2": 0.768,
+      "profit_threshold": 0.912
     },
     "sell": {
-      "high_offset": 1.456,
-      "high_offset_2": 1.39,
-      "pHSL": -0.149,
-      "pPF_1": 0.027,
-      "pPF_2": 0.052,
-      "pSL_1": 0.039,
-      "pSL_2": 0.072
+      "high_offset": 1.172,
+      "high_offset_2": 1.065,
+      "pHSL": -0.035,
+      "pPF_1": 0.03,
+      "pPF_2": 0.083,
+      "pSL_1": 0.014,
+      "pSL_2": 0.085
     },
-    "protection": {}
+    "protection": {},
+    "roi": {
+      "0": 0.20099999999999998,
+      "38": 0.057,
+      "73": 0.028,
+      "83": 0
+    },
+    "stoploss": {
+      "stoploss": -0.193
+    }
   },
   "ft_stratparam_v": 1,
-  "export_time": "2025-05-23 08:16:39.019057+00:00"
+  "export_time": "2025-05-25 09:06:57.555737+00:00"
 }

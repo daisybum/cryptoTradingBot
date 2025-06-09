@@ -142,7 +142,7 @@ def _convert_value_type(original_value: Any, new_value: str) -> Any:
     return new_value
 
 
-def get_config_value(config: Dict[str, Any], key_path: str, default: Optional[Any] = None) -> Any:
+# DEAD CODE: def get_config_value(config: Dict[str, Any], key_path: str, default: Optional[Any] = None) -> Any:
     """
     설정에서 중첩된 값을 가져옵니다.
 

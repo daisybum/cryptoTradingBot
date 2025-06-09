@@ -204,7 +204,7 @@ class VaultClient:
             logger.error(f"비밀 목록 조회 실패: {e}")
             return []
     
-    def delete_secret(self, key: str) -> bool:
+# DEAD CODE:     def delete_secret(self, key: str) -> bool:
         """
         비밀 삭제
         
@@ -274,7 +274,7 @@ class SecretsManager:
         
         return api_key, api_secret
     
-    def store_api_credentials(self, api_key: str, api_secret: str, exchange: str = 'binance') -> bool:
+# DEAD CODE:     def store_api_credentials(self, api_key: str, api_secret: str, exchange: str = 'binance') -> bool:
         """
         API 자격 증명 저장
         
@@ -330,7 +330,7 @@ class SecretsManager:
         
         return credentials
     
-    def store_database_credentials(self, credentials: Dict[str, str], db_type: str = 'postgresql') -> bool:
+# DEAD CODE:     def store_database_credentials(self, credentials: Dict[str, str], db_type: str = 'postgresql') -> bool:
         """
         데이터베이스 자격 증명 저장
         
@@ -380,7 +380,7 @@ class SecretsManager:
         
         return token, chat_id
     
-    def store_telegram_credentials(self, token: str, chat_id: str) -> bool:
+# DEAD CODE:     def store_telegram_credentials(self, token: str, chat_id: str) -> bool:
         """
         텔레그램 자격 증명 저장
         
@@ -401,7 +401,7 @@ class SecretsManager:
         
         return token_success and chat_id_success
     
-    def export_to_env_file(self, filepath: str = '.env') -> bool:
+# DEAD CODE:     def export_to_env_file(self, filepath: str = '.env') -> bool:
         """
         비밀을 환경 변수 파일로 내보내기
         
@@ -440,7 +440,7 @@ class SecretsManager:
             logger.error(f"비밀 내보내기 실패: {e}")
             return False
     
-    def import_from_env_file(self, filepath: str = '.env') -> bool:
+# DEAD CODE:     def import_from_env_file(self, filepath: str = '.env') -> bool:
         """
         환경 변수 파일에서 비밀 가져오기
         
@@ -479,7 +479,7 @@ class SecretsManager:
 
 
 # 유틸리티 함수
-def validate_api_key(api_key: str) -> bool:
+# DEAD CODE: def validate_api_key(api_key: str) -> bool:
     """
     API 키 유효성 검사
     
@@ -503,7 +503,7 @@ def validate_api_key(api_key: str) -> bool:
     
     return True
 
-def validate_api_secret(api_secret: str) -> bool:
+# DEAD CODE: def validate_api_secret(api_secret: str) -> bool:
     """
     API 시크릿 유효성 검사
     
@@ -527,7 +527,7 @@ def validate_api_secret(api_secret: str) -> bool:
     
     return True
 
-def generate_secure_password(length: int = 16) -> str:
+# DEAD CODE: def generate_secure_password(length: int = 16) -> str:
     """
     안전한 비밀번호 생성
     

@@ -23,7 +23,7 @@ class OHLCVData:
     close: float    # 종가
     volume: float   # 거래량
     
-    @classmethod
+# DEAD CODE:     @classmethod
     def from_list(cls, data: List) -> 'OHLCVData':
         """
         리스트에서 OHLCV 데이터 생성
@@ -46,7 +46,7 @@ class OHLCVData:
             volume=float(data[5])
         )
     
-    def to_list(self) -> List:
+# DEAD CODE:     def to_list(self) -> List:
         """
         OHLCV 데이터를 리스트로 변환
         
@@ -124,7 +124,7 @@ class MarketData:
     timeframe: str             # 타임프레임 (예: 5m)
     candles: List[OHLCVData]   # OHLCV 캔들 목록
     
-    def add_candle(self, candle: OHLCVData) -> None:
+# DEAD CODE:     def add_candle(self, candle: OHLCVData) -> None:
         """
         캔들 추가
         
@@ -149,7 +149,7 @@ class MarketData:
         # 타임스탬프 기준 정렬
         self.candles.sort(key=lambda x: x.timestamp)
     
-    def get_candle_at(self, timestamp: int) -> Optional[OHLCVData]:
+# DEAD CODE:     def get_candle_at(self, timestamp: int) -> Optional[OHLCVData]:
         """
         특정 타임스탬프의 캔들 조회
         
@@ -165,7 +165,7 @@ class MarketData:
         
         return None
     
-    def to_dataframe(self):
+# DEAD CODE:     def to_dataframe(self):
         """
         데이터프레임으로 변환
         

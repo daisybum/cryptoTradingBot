@@ -85,13 +85,13 @@ services:
     restart: unless-stopped
     volumes:
       - ./config:/freqtrade/config
-      - ./user_data:/freqtrade/user_data
+      - ./user_data:/freqtrade/user_data:rw
       - ./logs:/freqtrade/logs
     command: >
       trade
       --logfile /freqtrade/logs/freqtrade.log
       --db-url postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      --strategy NASOSv5_mod3
+      --strategy NASOSv4Multi_final
       --strategy-path /freqtrade/user_data/strategies
       --config /freqtrade/config/freqtrade.json
     environment:

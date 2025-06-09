@@ -95,12 +95,12 @@ class PerformanceNotification(BaseModel):
 class NotificationStatus(BaseModel):
     """알림 상태 모델"""
     is_running: bool = Field(..., description="실행 상태")
-    telegram_active: bool = Field(..., description="텔레그램 활성화 상태")
-    redis_publisher_connected: bool = Field(..., description="Redis 발행자 연결 상태")
-    redis_subscriber_connected: bool = Field(..., description="Redis 구독자 연결 상태")
+# DEAD CODE:     telegram_active: bool = Field(..., description="텔레그램 활성화 상태")
+# DEAD CODE:     redis_publisher_connected: bool = Field(..., description="Redis 발행자 연결 상태")
+# DEAD CODE:     redis_subscriber_connected: bool = Field(..., description="Redis 구독자 연결 상태")
     notification_count: int = Field(..., description="알림 수")
     start_time: str = Field(..., description="시작 시간")
-    uptime_seconds: float = Field(..., description="가동 시간 (초)")
+# DEAD CODE:     uptime_seconds: float = Field(..., description="가동 시간 (초)")
     queue_size: int = Field(..., description="큐 크기")
 
 # 알림 관리자 의존성
@@ -119,10 +119,10 @@ def get_report_generator():
     return ReportGenerator()
 
 # API 엔드포인트
-@router.post("/general", response_model=dict)
+# DEAD CODE: @router.post("/general", response_model=dict)
 async def send_general_notification(
     notification: NotificationBase,
-    background_tasks: BackgroundTasks,
+# DEAD CODE:     background_tasks: BackgroundTasks,
     notification_manager: NotificationManager = Depends(get_notification_manager)
 ):
     """일반 알림 전송"""
@@ -142,7 +142,7 @@ async def send_general_notification(
 @router.post("/trade", response_model=dict)
 async def send_trade_notification(
     notification: TradeNotification,
-    background_tasks: BackgroundTasks,
+# DEAD CODE:     background_tasks: BackgroundTasks,
     notification_manager: NotificationManager = Depends(get_notification_manager)
 ):
     """거래 알림 전송"""
@@ -162,7 +162,7 @@ async def send_trade_notification(
 @router.post("/order", response_model=dict)
 async def send_order_notification(
     notification: OrderNotification,
-    background_tasks: BackgroundTasks,
+# DEAD CODE:     background_tasks: BackgroundTasks,
     notification_manager: NotificationManager = Depends(get_notification_manager)
 ):
     """주문 알림 전송"""
@@ -175,10 +175,10 @@ async def send_order_notification(
         logger.error(f"주문 알림 전송 실패: {e}")
         raise HTTPException(status_code=500, detail=f"주문 알림 전송 실패: {str(e)}")
 
-@router.post("/risk", response_model=dict)
+# DEAD CODE: @router.post("/risk", response_model=dict)
 async def send_risk_notification(
     notification: RiskNotification,
-    background_tasks: BackgroundTasks,
+# DEAD CODE:     background_tasks: BackgroundTasks,
     notification_manager: NotificationManager = Depends(get_notification_manager)
 ):
     """리스크 알림 전송"""
@@ -191,10 +191,10 @@ async def send_risk_notification(
         logger.error(f"리스크 알림 전송 실패: {e}")
         raise HTTPException(status_code=500, detail=f"리스크 알림 전송 실패: {str(e)}")
 
-@router.post("/system", response_model=dict)
+# DEAD CODE: @router.post("/system", response_model=dict)
 async def send_system_notification(
     notification: SystemNotification,
-    background_tasks: BackgroundTasks,
+# DEAD CODE:     background_tasks: BackgroundTasks,
     notification_manager: NotificationManager = Depends(get_notification_manager)
 ):
     """시스템 알림 전송"""
@@ -207,10 +207,10 @@ async def send_system_notification(
         logger.error(f"시스템 알림 전송 실패: {e}")
         raise HTTPException(status_code=500, detail=f"시스템 알림 전송 실패: {str(e)}")
 
-@router.post("/performance", response_model=dict)
+# DEAD CODE: @router.post("/performance", response_model=dict)
 async def send_performance_notification(
     notification: PerformanceNotification,
-    background_tasks: BackgroundTasks,
+# DEAD CODE:     background_tasks: BackgroundTasks,
     notification_manager: NotificationManager = Depends(get_notification_manager)
 ):
     """성능 알림 전송"""
@@ -223,12 +223,12 @@ async def send_performance_notification(
         logger.error(f"성능 알림 전송 실패: {e}")
         raise HTTPException(status_code=500, detail=f"성능 알림 전송 실패: {str(e)}")
 
-@router.post("/report/{report_type}", response_model=dict)
+# DEAD CODE: @router.post("/report/{report_type}", response_model=dict)
 async def generate_and_send_report(
     report_type: str = Path(..., description="보고서 유형 (daily, weekly, monthly)"),
     strategy: Optional[str] = Query(None, description="전략 이름"),
     report_date: Optional[str] = Query(None, description="보고서 날짜 (YYYY-MM-DD)"),
-    background_tasks: BackgroundTasks = None,
+# DEAD CODE:     background_tasks: BackgroundTasks = None,
     report_generator: ReportGenerator = Depends(get_report_generator),
     notification_manager: NotificationManager = Depends(get_notification_manager)
 ):
@@ -290,7 +290,7 @@ async def generate_and_send_report(
         logger.error(f"보고서 생성 및 전송 실패: {e}")
         raise HTTPException(status_code=500, detail=f"보고서 생성 및 전송 실패: {str(e)}")
 
-@router.get("/status", response_model=NotificationStatus)
+# DEAD CODE: @router.get("/status", response_model=NotificationStatus)
 async def get_notification_status(
     notification_manager: NotificationManager = Depends(get_notification_manager)
 ):
@@ -302,7 +302,7 @@ async def get_notification_status(
         logger.error(f"알림 상태 가져오기 실패: {e}")
         raise HTTPException(status_code=500, detail=f"알림 상태 가져오기 실패: {str(e)}")
 
-@router.post("/start", response_model=dict)
+# DEAD CODE: @router.post("/start", response_model=dict)
 async def start_notification_system(
     notification_manager: NotificationManager = Depends(get_notification_manager)
 ):
@@ -314,7 +314,7 @@ async def start_notification_system(
         logger.error(f"알림 시스템 시작 실패: {e}")
         raise HTTPException(status_code=500, detail=f"알림 시스템 시작 실패: {str(e)}")
 
-@router.post("/stop", response_model=dict)
+# DEAD CODE: @router.post("/stop", response_model=dict)
 async def stop_notification_system(
     notification_manager: NotificationManager = Depends(get_notification_manager)
 ):

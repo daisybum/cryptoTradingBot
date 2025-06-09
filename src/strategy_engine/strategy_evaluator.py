@@ -28,7 +28,7 @@ class StrategyEvaluator:
         """
         self.config = config
         self.timeframes = ['5m', '15m', '1h']  # Default timeframes for multi-timeframe analysis
-        self.required_indicators = []
+# DEAD CODE:         self.required_indicators = []
         self.entry_retries = {}  # For slippage protection
         
     def prepare_dataframes(self, dataframes: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
@@ -74,8 +74,7 @@ class StrategyEvaluator:
             
         return prepared_dataframes
     
-    def evaluate_generic_strategy(self, dataframes: Dict[str, pd.DataFrame], 
-                                strategy_name: str, params: Dict) -> Dict[str, Dict[str, Union[bool, float]]]:
+# DEAD CODE:     def evaluate_generic_strategy(self, dataframes: Dict[str, pd.DataFrame], strategy_name: str, params: Dict) -> Dict[str, Dict[str, Union[bool, float]]]:
         """
         Generic strategy evaluation method that delegates to specific strategy implementations.
         This is a placeholder for future strategy implementations.

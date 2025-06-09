@@ -1,6 +1,6 @@
 # Task ID: 13
 # Title: React Web Dashboard Frontend
-# Status: pending
+# Status: done
 # Dependencies: 12
 # Priority: low
 # Description: Implement a React-based web dashboard for monitoring and controlling the trading bot

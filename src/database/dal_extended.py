@@ -10,7 +10,7 @@ from datetime import datetime, date, timedelta
 from contextlib import contextmanager
 
 from sqlalchemy.orm import Session
-from sqlalchemy import func, and_, or_, desc, asc
+# DEAD CODE: from sqlalchemy import func, and_, or_, desc, asc
 from sqlalchemy.exc import SQLAlchemyError
 from influxdb_client import Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
@@ -25,7 +25,7 @@ from src.database.dal import BaseDAL
 logger = logging.getLogger(__name__)
 
 
-class ParamSetDAL(BaseDAL[ParamSet]):
+# DEAD CODE: class ParamSetDAL(BaseDAL[ParamSet]):
     """
     파라미터 세트 데이터 액세스 레이어
     """
@@ -33,7 +33,7 @@ class ParamSetDAL(BaseDAL[ParamSet]):
     def __init__(self):
         super().__init__(ParamSet)
     
-    def get_active_params(self, strategy: str) -> Optional[ParamSet]:
+# DEAD CODE:     def get_active_params(self, strategy: str) -> Optional[ParamSet]:
         """
         활성화된 파라미터 세트 조회
         
@@ -49,7 +49,7 @@ class ParamSetDAL(BaseDAL[ParamSet]):
                 ParamSet.is_active == True
             ).first()
     
-    def get_params_by_strategy(self, strategy: str) -> List[ParamSet]:
+# DEAD CODE:     def get_params_by_strategy(self, strategy: str) -> List[ParamSet]:
         """
         전략별 파라미터 세트 조회
         
@@ -64,7 +64,7 @@ class ParamSetDAL(BaseDAL[ParamSet]):
                 ParamSet.strategy == strategy
             ).order_by(desc(ParamSet.created_at)).all()
     
-    def activate_param_set(self, param_id: int) -> bool:
+# DEAD CODE:     def activate_param_set(self, param_id: int) -> bool:
         """
         파라미터 세트 활성화
         
@@ -92,7 +92,7 @@ class ParamSetDAL(BaseDAL[ParamSet]):
             return True
 
 
-class StatsDailyDAL(BaseDAL[StatsDaily]):
+# DEAD CODE: class StatsDailyDAL(BaseDAL[StatsDaily]):
     """
     일일 통계 데이터 액세스 레이어
     """
@@ -124,7 +124,7 @@ class StatsDailyDAL(BaseDAL[StatsDaily]):
                 
             return query.first()
     
-    def get_stats_by_date_range(self, start_date: date, end_date: date, 
+# DEAD CODE:     def get_stats_by_date_range(self, start_date: date, end_date: date, 
                                strategy: Optional[str] = None,
                                pair: Optional[str] = None) -> List[StatsDaily]:
         """
@@ -153,7 +153,7 @@ class StatsDailyDAL(BaseDAL[StatsDaily]):
                 
             return query.order_by(StatsDaily.date).all()
     
-    def calculate_daily_stats(self, target_date: date, strategy: Optional[str] = None,
+# DEAD CODE:     def calculate_daily_stats(self, target_date: date, strategy: Optional[str] = None,
                              pair: Optional[str] = None) -> Optional[StatsDaily]:
         """
         일일 통계 계산 및 저장
@@ -247,7 +247,7 @@ class StatsDailyDAL(BaseDAL[StatsDaily]):
             return self.create(stats_data)
 
 
-class OrderDAL(BaseDAL[Order]):
+# DEAD CODE: class OrderDAL(BaseDAL[Order]):
     """
     주문 데이터 액세스 레이어
     """
@@ -255,7 +255,7 @@ class OrderDAL(BaseDAL[Order]):
     def __init__(self):
         super().__init__(Order)
     
-    def get_by_order_id(self, order_id: str) -> Optional[Order]:
+# DEAD CODE:     def get_by_order_id(self, order_id: str) -> Optional[Order]:
         """
         주문 ID로 주문 조회
         
@@ -288,7 +288,7 @@ class OrderDAL(BaseDAL[Order]):
                 
             return query.all()
     
-    def get_orders_by_date_range(self, start_date: datetime, end_date: datetime, 
+# DEAD CODE:     def get_orders_by_date_range(self, start_date: datetime, end_date: datetime, 
                                 symbol: Optional[str] = None,
                                 status: Optional[str] = None) -> List[Order]:
         """
@@ -318,7 +318,7 @@ class OrderDAL(BaseDAL[Order]):
             return query.order_by(Order.created_at).all()
 
 
-class FillDAL(BaseDAL[Fill]):
+# DEAD CODE: class FillDAL(BaseDAL[Fill]):
     """
     체결 데이터 액세스 레이어
     """
@@ -326,7 +326,7 @@ class FillDAL(BaseDAL[Fill]):
     def __init__(self):
         super().__init__(Fill)
     
-    def get_by_fill_id(self, fill_id: str) -> Optional[Fill]:
+# DEAD CODE:     def get_by_fill_id(self, fill_id: str) -> Optional[Fill]:
         """
         체결 ID로 체결 조회
         
@@ -339,7 +339,7 @@ class FillDAL(BaseDAL[Fill]):
         with self.get_session() as session:
             return session.query(Fill).filter(Fill.fill_id == fill_id).first()
     
-    def get_fills_by_order_id(self, order_id: str) -> List[Fill]:
+# DEAD CODE:     def get_fills_by_order_id(self, order_id: str) -> List[Fill]:
         """
         주문 ID로 체결 목록 조회
         
@@ -355,7 +355,7 @@ class FillDAL(BaseDAL[Fill]):
             ).order_by(Fill.timestamp).all()
 
 
-class OrderErrorDAL(BaseDAL[OrderError]):
+# DEAD CODE: class OrderErrorDAL(BaseDAL[OrderError]):
     """
     주문 오류 데이터 액세스 레이어
     """
@@ -363,7 +363,7 @@ class OrderErrorDAL(BaseDAL[OrderError]):
     def __init__(self):
         super().__init__(OrderError)
     
-    def get_errors_by_order_id(self, order_id: str) -> List[OrderError]:
+# DEAD CODE:     def get_errors_by_order_id(self, order_id: str) -> List[OrderError]:
         """
         주문 ID로 오류 목록 조회
         
@@ -378,7 +378,7 @@ class OrderErrorDAL(BaseDAL[OrderError]):
                 OrderError.order_id == order_id
             ).order_by(desc(OrderError.timestamp)).all()
     
-    def get_recent_errors(self, limit: int = 50) -> List[OrderError]:
+# DEAD CODE:     def get_recent_errors(self, limit: int = 50) -> List[OrderError]:
         """
         최근 오류 목록 조회
         
@@ -394,7 +394,7 @@ class OrderErrorDAL(BaseDAL[OrderError]):
             ).limit(limit).all()
 
 
-class IndicatorSnapshotDAL(BaseDAL[IndicatorSnapshot]):
+# DEAD CODE: class IndicatorSnapshotDAL(BaseDAL[IndicatorSnapshot]):
     """
     지표 스냅샷 데이터 액세스 레이어
     """
@@ -419,7 +419,7 @@ class IndicatorSnapshotDAL(BaseDAL[IndicatorSnapshot]):
                 IndicatorSnapshot.timeframe == timeframe
             ).order_by(desc(IndicatorSnapshot.timestamp)).first()
     
-    def get_snapshots_by_date_range(self, symbol: str, timeframe: str,
+# DEAD CODE:     def get_snapshots_by_date_range(self, symbol: str, timeframe: str,
                                    start_date: datetime, end_date: datetime) -> List[IndicatorSnapshot]:
         """
         날짜 범위로 지표 스냅샷 조회
@@ -442,7 +442,7 @@ class IndicatorSnapshotDAL(BaseDAL[IndicatorSnapshot]):
             ).order_by(IndicatorSnapshot.timestamp).all()
 
 
-class TradeSessionDAL(BaseDAL[TradeSession]):
+# DEAD CODE: class TradeSessionDAL(BaseDAL[TradeSession]):
     """
     거래 세션 데이터 액세스 레이어
     """
@@ -450,7 +450,7 @@ class TradeSessionDAL(BaseDAL[TradeSession]):
     def __init__(self):
         super().__init__(TradeSession)
     
-    def get_by_session_id(self, session_id: str) -> Optional[TradeSession]:
+# DEAD CODE:     def get_by_session_id(self, session_id: str) -> Optional[TradeSession]:
         """
         세션 ID로 거래 세션 조회
         
@@ -465,7 +465,7 @@ class TradeSessionDAL(BaseDAL[TradeSession]):
                 TradeSession.session_id == session_id
             ).first()
     
-    def get_active_sessions(self) -> List[TradeSession]:
+# DEAD CODE:     def get_active_sessions(self) -> List[TradeSession]:
         """
         활성 거래 세션 조회
         

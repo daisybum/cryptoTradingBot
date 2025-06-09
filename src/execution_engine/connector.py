@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 FREQTRADE_ENV_PREFIX = "FREQTRADE__"
 
 # Binance API 관련 설정 키
-BINANCE_CONFIG_KEYS = {
+# DEAD CODE: BINANCE_CONFIG_KEYS = {
     "exchange_name": "name",
     "api_key": "key",
     "api_secret": "secret",
@@ -133,7 +133,7 @@ class BinanceConnector:
         logger.info(f"Binance 커넥터 설정 검증 완료: {exchange_id}")
         return True
     
-    def get_exchange_config(self) -> Dict[str, Any]:
+# DEAD CODE:     def get_exchange_config(self) -> Dict[str, Any]:
         """현재 교환소 설정 반환"""
         return self.exchange_config
     

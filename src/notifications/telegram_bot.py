@@ -9,16 +9,16 @@ import os
 import logging
 import asyncio
 import json
-import hmac
-import hashlib
+# DEAD CODE: import hmac
+# DEAD CODE: import hashlib
 import time
 from typing import Dict, Any, Optional, List, Callable, Union
 from datetime import datetime, timedelta
 from functools import wraps
 
-from telegram import Update, Bot
+# DEAD CODE: from telegram import Update, Bot
 from telegram import ParseMode
-from telegram.ext import (
+# DEAD CODE: # DEAD CODE: # DEAD CODE: from telegram.ext import (
     Updater, CommandHandler, CallbackContext, 
     MessageHandler, Filters, Dispatcher
 )

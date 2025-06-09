@@ -21,7 +21,7 @@ router = APIRouter(
     responses={401: {"description": "Unauthorized"}},
 )
 
-@router.get("/", response_model=List[TradeResponse])
+# DEAD CODE: @router.get("/", response_model=List[TradeResponse])
 async def get_trades(
     symbol: Optional[str] = None,
     strategy: Optional[str] = None,
@@ -62,7 +62,7 @@ async def get_trades(
     
     return query.all()
 
-@router.get("/{trade_id}", response_model=TradeResponse)
+# DEAD CODE: @router.get("/{trade_id}", response_model=TradeResponse)
 async def get_trade(trade_id: int, db: Session = Depends(get_db)):
     """
     특정 거래 조회
@@ -79,7 +79,7 @@ async def get_trade(trade_id: int, db: Session = Depends(get_db)):
     
     return trade
 
-@router.post("/", response_model=TradeResponse)
+# DEAD CODE: @router.post("/", response_model=TradeResponse)
 async def create_trade(trade: TradeCreate, db: Session = Depends(get_db)):
     """
     새 거래 생성
@@ -92,7 +92,7 @@ async def create_trade(trade: TradeCreate, db: Session = Depends(get_db)):
     
     return db_trade
 
-@router.put("/{trade_id}", response_model=TradeResponse)
+# DEAD CODE: @router.put("/{trade_id}", response_model=TradeResponse)
 async def update_trade(
     trade_id: int,
     trade_update: TradeUpdate,
@@ -129,7 +129,7 @@ async def update_trade(
     
     return db_trade
 
-@router.delete("/{trade_id}")
+# DEAD CODE: @router.delete("/{trade_id}")
 async def delete_trade(trade_id: int, db: Session = Depends(get_db)):
     """
     거래 삭제
@@ -149,7 +149,7 @@ async def delete_trade(trade_id: int, db: Session = Depends(get_db)):
     
     return {"status": "success", "message": f"Trade with ID {trade_id} deleted"}
 
-@router.get("/summary/daily", response_model=List[dict])
+# DEAD CODE: @router.get("/summary/daily", response_model=List[dict])
 async def get_daily_trade_summary(
     start_date: Optional[datetime] = None,
     end_date: Optional[datetime] = None,
@@ -197,7 +197,7 @@ async def get_daily_trade_summary(
     
     return summary
 
-@router.get("/summary/symbols", response_model=List[dict])
+# DEAD CODE: @router.get("/summary/symbols", response_model=List[dict])
 async def get_symbol_trade_summary(
     start_date: Optional[datetime] = None,
     end_date: Optional[datetime] = None,

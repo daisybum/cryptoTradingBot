@@ -16,7 +16,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-class NotificationTemplates:
+# DEAD CODE: class NotificationTemplates:
     """알림 템플릿 클래스"""
     
     # 거래 시작 템플릿
@@ -162,7 +162,7 @@ ID: <code>{{ order_id }}</code>
             logger.error(f"템플릿 렌더링 실패: {e}")
             return f"템플릿 렌더링 오류: {str(e)}"
     
-    @classmethod
+# DEAD CODE:     @classmethod
     def trade_open(cls, data: Dict[str, Any]) -> str:
         """
         거래 시작 메시지 생성
@@ -175,7 +175,7 @@ ID: <code>{{ order_id }}</code>
         """
         return cls.render_template(cls.TRADE_OPEN_TEMPLATE, data)
     
-    @classmethod
+# DEAD CODE:     @classmethod
     def trade_close(cls, data: Dict[str, Any]) -> str:
         """
         거래 종료 메시지 생성
@@ -188,7 +188,7 @@ ID: <code>{{ order_id }}</code>
         """
         return cls.render_template(cls.TRADE_CLOSE_TEMPLATE, data)
     
-    @classmethod
+# DEAD CODE:     @classmethod
     def order_placed(cls, data: Dict[str, Any]) -> str:
         """
         주문 생성 메시지 생성
@@ -201,7 +201,7 @@ ID: <code>{{ order_id }}</code>
         """
         return cls.render_template(cls.ORDER_PLACED_TEMPLATE, data)
     
-    @classmethod
+# DEAD CODE:     @classmethod
     def order_filled(cls, data: Dict[str, Any]) -> str:
         """
         주문 체결 메시지 생성
@@ -214,7 +214,7 @@ ID: <code>{{ order_id }}</code>
         """
         return cls.render_template(cls.ORDER_FILLED_TEMPLATE, data)
     
-    @classmethod
+# DEAD CODE:     @classmethod
     def order_canceled(cls, data: Dict[str, Any]) -> str:
         """
         주문 취소 메시지 생성
@@ -227,7 +227,7 @@ ID: <code>{{ order_id }}</code>
         """
         return cls.render_template(cls.ORDER_CANCELED_TEMPLATE, data)
     
-    @classmethod
+# DEAD CODE:     @classmethod
     def risk_alert(cls, data: Dict[str, Any]) -> str:
         """
         리스크 알림 메시지 생성
@@ -240,7 +240,7 @@ ID: <code>{{ order_id }}</code>
         """
         return cls.render_template(cls.RISK_ALERT_TEMPLATE, data)
     
-    @classmethod
+# DEAD CODE:     @classmethod
     def system_status(cls, data: Dict[str, Any]) -> str:
         """
         시스템 상태 메시지 생성
@@ -253,7 +253,7 @@ ID: <code>{{ order_id }}</code>
         """
         return cls.render_template(cls.SYSTEM_STATUS_TEMPLATE, data)
     
-    @classmethod
+# DEAD CODE:     @classmethod
     def performance_report(cls, data: Dict[str, Any]) -> str:
         """
         성능 보고서 메시지 생성

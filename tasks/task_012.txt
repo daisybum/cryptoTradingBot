@@ -1,6 +1,6 @@
 # Task ID: 12
 # Title: FastAPI Backend for Web Dashboard
-# Status: pending
+# Status: done
 # Dependencies: 6, 7
 # Priority: low
 # Description: Implement a FastAPI backend service for the web dashboard

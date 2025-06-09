@@ -11,14 +11,14 @@ from datetime import datetime, timedelta
 
 from influxdb_client import Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
-from influxdb_client.client.query_api import QueryApi
+# DEAD CODE: from influxdb_client.client.query_api import QueryApi
 
 from src.database.connection import get_db_manager
 
 logger = logging.getLogger(__name__)
 
 
-class InfluxDAL:
+# DEAD CODE: class InfluxDAL:
     """
     InfluxDB 데이터 액세스 레이어
     
@@ -38,7 +38,7 @@ class InfluxDAL:
         self.bucket = self.db_manager.influx_bucket
         self.org = self.db_manager.influx_org
     
-    def write_price_data(self, symbol: str, timeframe: str, timestamp: datetime,
+# DEAD CODE:     def write_price_data(self, symbol: str, timeframe: str, timestamp: datetime,
                         open_price: float, high_price: float, low_price: float,
                         close_price: float, volume: float) -> bool:
         """
@@ -74,7 +74,7 @@ class InfluxDAL:
             logger.error(f"가격 데이터 저장 실패: {e}")
             return False
     
-    def write_trade_data(self, trade_id: str, symbol: str, side: str, 
+# DEAD CODE:     def write_trade_data(self, trade_id: str, symbol: str, side: str, 
                         entry_price: float, exit_price: Optional[float],
                         quantity: float, pnl: Optional[float],
                         strategy: str, timestamp: datetime,
@@ -128,7 +128,7 @@ class InfluxDAL:
             logger.error(f"거래 데이터 저장 실패: {e}")
             return False
     
-    def write_indicator_data(self, symbol: str, timeframe: str, timestamp: datetime,
+# DEAD CODE:     def write_indicator_data(self, symbol: str, timeframe: str, timestamp: datetime,
                             indicators: Dict[str, float], strategy: Optional[str] = None) -> bool:
         """
         지표 데이터 저장
@@ -165,7 +165,7 @@ class InfluxDAL:
             logger.error(f"지표 데이터 저장 실패: {e}")
             return False
     
-    def write_performance_data(self, timestamp: datetime, balance: float, 
+# DEAD CODE:     def write_performance_data(self, timestamp: datetime, balance: float, 
                               equity: float, drawdown: Optional[float] = None,
                               open_positions: int = 0, daily_pnl: Optional[float] = None,
                               tags: Optional[Dict[str, str]] = None) -> bool:
@@ -212,7 +212,7 @@ class InfluxDAL:
             logger.error(f"성능 데이터 저장 실패: {e}")
             return False
     
-    def get_price_data(self, symbol: str, timeframe: str, 
+# DEAD CODE:     def get_price_data(self, symbol: str, timeframe: str, 
                       start_time: datetime, end_time: Optional[datetime] = None,
                       limit: int = 1000) -> List[Dict[str, Any]]:
         """
@@ -270,7 +270,7 @@ class InfluxDAL:
             logger.error(f"가격 데이터 조회 실패: {e}")
             return []
     
-    def get_indicator_data(self, symbol: str, timeframe: str, 
+# DEAD CODE:     def get_indicator_data(self, symbol: str, timeframe: str, 
                           start_time: datetime, end_time: Optional[datetime] = None,
                           strategy: Optional[str] = None,
                           indicators: Optional[List[str]] = None,
@@ -485,7 +485,7 @@ class InfluxDAL:
             logger.error(f"거래 데이터 조회 실패: {e}")
             return []
     
-    def calculate_performance_metrics(self, start_time: datetime, 
+# DEAD CODE:     def calculate_performance_metrics(self, start_time: datetime, 
                                      end_time: Optional[datetime] = None,
                                      strategy: Optional[str] = None) -> Dict[str, Any]:
         """

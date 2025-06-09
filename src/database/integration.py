@@ -24,7 +24,7 @@ class TradingDataManager:
         self.order_repo = OrderRepository()
         self.indicator_repo = IndicatorRepository()
         self.session_repo = TradeSessionRepository()
-        self.fill_repo = FillRepository()
+# DEAD CODE:         self.fill_repo = FillRepository()
         
         logger.info("거래 데이터 관리자 초기화됨")
     
@@ -117,7 +117,7 @@ class TradingDataManager:
             logger.error(f"주문 체결 처리 실패: {e}")
             return False
     
-    async def record_order_error(self, order_id: str, error_message: str, 
+# DEAD CODE:     async def record_order_error(self, order_id: str, error_message: str, 
                                error_code: Optional[str] = None,
                                error_details: Optional[Dict[str, Any]] = None,
                                update_status: bool = False) -> bool:
@@ -205,7 +205,7 @@ class TradingDataManager:
             logger.error(f"미체결 주문 조회 실패: {e}")
             return []
     
-    async def save_indicator_snapshot(self, snapshot_data: Dict[str, Any]) -> bool:
+# DEAD CODE:     async def save_indicator_snapshot(self, snapshot_data: Dict[str, Any]) -> bool:
         """
         지표 스냅샷 저장
         
@@ -227,7 +227,7 @@ class TradingDataManager:
             logger.error(f"지표 스냅샷 저장 실패: {e}")
             return False
     
-    async def get_latest_indicators(self, symbol: str, timeframe: Union[TimeFrame, str]) -> Optional[Dict[str, Any]]:
+# DEAD CODE:     async def get_latest_indicators(self, symbol: str, timeframe: Union[TimeFrame, str]) -> Optional[Dict[str, Any]]:
         """
         최신 지표 조회
         
@@ -365,7 +365,7 @@ class TradingDataManager:
             logger.error(f"거래 세션 종료 실패: {e}")
             return False
     
-    async def update_session_stats(self, session_id: str, stats: Dict[str, Any]) -> bool:
+# DEAD CODE:     async def update_session_stats(self, session_id: str, stats: Dict[str, Any]) -> bool:
         """
         세션 통계 업데이트
         

@@ -64,7 +64,7 @@ performance_analyzer = PerformanceAnalyzer(db_manager)
 visualizer = PerformanceVisualizer(db_manager)
 report_generator = ReportGenerator(db_manager)
 
-@router.get("/metrics", response_model=PerformanceMetricsResponse)
+# DEAD CODE: @router.get("/metrics", response_model=PerformanceMetricsResponse)
 async def get_performance_metrics(
     days: int = Query(30, description="분석할 일수"),
     strategy: Optional[str] = Query(None, description="전략 이름"),
@@ -114,10 +114,10 @@ async def get_performance_metrics(
         logger.error(f"성능 지표 가져오기 실패: {e}")
         raise HTTPException(status_code=500, detail=f"성능 지표 가져오기 실패: {str(e)}")
 
-@router.post("/reports", response_model=ReportGenerationResponse)
+# DEAD CODE: @router.post("/reports", response_model=ReportGenerationResponse)
 async def generate_report(
     request: ReportGenerationRequest,
-    background_tasks: BackgroundTasks
+# DEAD CODE:     background_tasks: BackgroundTasks
 ):
     """
     보고서 생성

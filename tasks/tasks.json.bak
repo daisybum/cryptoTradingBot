@@ -192,8 +192,57 @@
       "dependencies": [
         3
       ],
-      "status": "pending",
-      "subtasks": []
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Freqtrade Binance Connector Configuration and Safety Checks",
+          "description": "Set up and validate the Freqtrade Binance connector, ensuring correct API key management, environment variable usage, and exchange-specific settings. Implement safety checks for API key validity, correct exchange ID (binance/binanceus), and secure storage of credentials. Validate configuration at startup and log detected environment variables. Include checks for minimum order size, rate limits, and withdrawal permissions.",
+          "dependencies": [],
+          "details": "Technical specifications:\n- Use environment variables prefixed with FREQTRADE__ for sensitive data (API keys, secrets).\n- Support both standard and RSA API keys, handling multi-line secrets as required.\n- Validate configuration using Freqtrade's built-in syntax checker and show-config subcommand.\n- Implement startup checks for:\n  - Exchange ID correctness (binance vs binanceus)\n  - API key/secret presence and format\n  - Minimum order size and pair whitelist\n  - Rate limit compliance\n  - Withdrawal permissions disabled for trading-only keys\nEdge cases:\n- Missing or malformed API keys\n- Incorrect exchange ID\n- Insufficient permissions\nTesting scenarios:\n- Attempt startup with missing/invalid keys\n- Use both binance and binanceus IDs\n- Simulate rate limit errors\n- Validate logging of environment variables",
+          "status": "done"
+        },
+        {
+          "id": 2,
+          "title": "Order Type Implementation (Limit Orders with Market Fallback)",
+          "description": "Implement support for placing limit orders with an automatic fallback to market orders if the limit order fails or is not filled within a specified timeout. Ensure compatibility with Binance's order types and Freqtrade's order placement APIs. Include logic for price slippage tolerance and order expiration.",
+          "dependencies": [
+            1
+          ],
+          "details": "Technical specifications:\n- Use Freqtrade's order placement API to submit limit orders by default.\n- Monitor order status; if not filled within a configurable timeout, cancel and submit a market order for the remaining amount.\n- Implement price slippage checks to avoid executing at unfavorable prices.\n- Support partial fills and handle order expiration/cancellation gracefully.\nEdge cases:\n- Partial fills before fallback\n- Market order fails due to insufficient balance or price movement\n- Network/API errors during fallback\nTesting scenarios:\n- Place limit orders that do not fill and verify market fallback\n- Simulate partial fills and ensure correct handling\n- Test slippage limits by forcing adverse price movement\n- Simulate API/network errors during fallback",
+          "status": "done"
+        },
+        {
+          "id": 3,
+          "title": "Real-time Fill Tracking via WebSocket",
+          "description": "Integrate Binance WebSocket streams to track order fills in real time. Update internal order status and trigger downstream processes upon fill events. Ensure resilience to connection drops and message loss.",
+          "dependencies": [
+            2
+          ],
+          "details": "Technical specifications:\n- Use python-binance or similar library to subscribe to user data streams for order updates.\n- Parse execution reports and update order status in the engine immediately upon fill/cancel events.\n- Implement reconnection logic and message replay for missed events.\n- Ensure thread/process safety when updating shared state.\nEdge cases:\n- WebSocket disconnects or message loss\n- Out-of-order or duplicate messages\n- Orders filled/canceled outside the engine (manual intervention)\nTesting scenarios:\n- Simulate WebSocket disconnects and verify recovery\n- Place/cancel orders manually and verify detection\n- Test with high-frequency fills to ensure no missed updates",
+          "status": "done"
+        },
+        {
+          "id": 4,
+          "title": "Trade Data Model and Database Schema Implementation",
+          "description": "Design and implement a robust data model and database schema to store trades, order statuses, fills, and error logs. Ensure compatibility with multi-timeframe strategies and indicator data (RSI, EWO, EMA, SMA). Support efficient querying and historical analysis.",
+          "dependencies": [
+            3
+          ],
+          "details": "Technical specifications:\n- Define tables/models for orders, trades, fills, errors, and indicator snapshots.\n- Store all relevant fields: order ID, type, status, timestamps, price, amount, fill details, error codes/messages, and strategy context (timeframe, indicator values).\n- Support atomic updates and transaction safety.\n- Index fields for efficient querying by pair, timeframe, and status.\nEdge cases:\n- Duplicate order IDs or fill events\n- Database connection loss or transaction failure\n- Large volume of historical data\nTesting scenarios:\n- Insert/update/delete orders and verify consistency\n- Simulate duplicate/missing fill events\n- Stress test with large datasets\n- Query trades by indicator/timeframe for strategy analysis",
+          "status": "done"
+        },
+        {
+          "id": 5,
+          "title": "Order Execution Queue with Error Handling",
+          "description": "Implement an order execution queue to manage concurrent order placements, retries, and error handling. Ensure robust handling of API errors, network issues, and edge cases such as duplicate or conflicting orders. Provide logging and alerting for critical failures.",
+          "dependencies": [
+            4
+          ],
+          "details": "Technical specifications:\n- Use a thread-safe queue or task scheduler for order execution requests.\n- Implement retry logic with exponential backoff for transient errors.\n- Detect and prevent duplicate/conflicting orders for the same pair.\n- Log all errors with context and trigger alerts for critical failures (e.g., repeated API errors, order rejections).\n- Support graceful shutdown and recovery of in-flight orders.\nEdge cases:\n- API rate limits or bans\n- Network partition or downtime\n- Simultaneous conflicting order requests\nTesting scenarios:\n- Simulate API/network errors and verify retries\n- Submit duplicate/conflicting orders and ensure correct handling\n- Test queue under high load and during shutdown/restart\n- Verify error logging and alerting mechanisms",
+          "status": "done"
+        }
+      ]
     },
     {
       "id": 5,
@@ -205,7 +254,7 @@
       "dependencies": [
         4
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     },
     {
@@ -218,7 +267,7 @@
       "dependencies": [
         1
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     },
     {
@@ -232,7 +281,7 @@
         5,
         6
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     },
     {
@@ -245,7 +294,7 @@
       "dependencies": [
         5
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     },
     {
@@ -259,7 +308,7 @@
         6,
         7
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     },
     {
@@ -274,7 +323,7 @@
         4,
         5
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     },
     {
@@ -288,7 +337,7 @@
         3,
         6
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     },
     {
@@ -302,7 +351,7 @@
         6,
         7
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     },
     {
@@ -315,7 +364,7 @@
       "dependencies": [
         12
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     },
     {
@@ -333,7 +382,7 @@
         8,
         11
       ],
-      "status": "pending",
+      "status": "in-progress",
       "subtasks": []
     },
     {

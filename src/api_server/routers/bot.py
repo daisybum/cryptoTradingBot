@@ -21,7 +21,7 @@ router = APIRouter(
     responses={401: {"description": "Unauthorized"}},
 )
 
-@router.get("/status", response_model=BotStatusResponse)
+# DEAD CODE: @router.get("/status", response_model=BotStatusResponse)
 async def get_bot_status(db: Session = Depends(get_db)):
     """
     현재 봇 상태 조회
@@ -36,7 +36,7 @@ async def get_bot_status(db: Session = Depends(get_db)):
     
     return bot_status
 
-@router.post("/status", response_model=BotStatusResponse)
+# DEAD CODE: @router.post("/status", response_model=BotStatusResponse)
 async def create_bot_status(
     bot_status: BotStatusCreate,
     db: Session = Depends(get_db)
@@ -52,7 +52,7 @@ async def create_bot_status(
     
     return db_bot_status
 
-@router.put("/status", response_model=BotStatusResponse)
+# DEAD CODE: @router.put("/status", response_model=BotStatusResponse)
 async def update_bot_status(
     bot_status: BotStatusUpdate,
     db: Session = Depends(get_db)
@@ -107,7 +107,7 @@ async def stop_bot():
             detail=f"Failed to stop bot: {str(e)}"
         )
 
-@router.post("/pause")
+# DEAD CODE: @router.post("/pause")
 async def pause_bot():
     """
     봇 일시 중지
@@ -122,7 +122,7 @@ async def pause_bot():
             detail=f"Failed to pause bot: {str(e)}"
         )
 
-@router.post("/resume")
+# DEAD CODE: @router.post("/resume")
 async def resume_bot():
     """
     봇 재개

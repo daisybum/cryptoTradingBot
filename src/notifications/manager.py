@@ -13,7 +13,7 @@ from datetime import datetime
 
 from src.notifications.telegram import TelegramNotifier, NotificationLevel
 from src.notifications.handlers import NotificationHandler, EventType
-from src.notifications.templates import NotificationTemplates
+# DEAD CODE: from src.notifications.templates import NotificationTemplates
 from src.notifications.redis_publisher import RedisPublisher, NotificationChannel
 from src.notifications.redis_subscriber import RedisSubscriber
 

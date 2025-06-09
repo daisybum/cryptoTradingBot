@@ -42,12 +42,8 @@
         "name": "binance",
         "key": "",
         "secret": "",
-        "ccxt_config": {
-            "enableRateLimit": true
-        },
-        "ccxt_async_config": {
-            "rateLimit": 200
-        },
+        "ccxt_config": {},
+        "ccxt_async_config": {},
         "pair_whitelist": [
             "BTC/USDT",
             "ETH/USDT",
@@ -55,9 +51,25 @@
             "SOL/USDT",
             "XRP/USDT",
             "ADA/USDT",
+            "DOGE/USDT",
             "AVAX/USDT",
             "DOT/USDT",
-            "LINK/USDT"
+            "LINK/USDT",
+            "MATIC/USDT",
+            "UNI/USDT",
+            "ATOM/USDT",
+            "LTC/USDT",
+            "BCH/USDT",
+            "ALGO/USDT",
+            "XLM/USDT",
+            "FIL/USDT",
+            "NEAR/USDT",
+            "ETC/USDT",
+            "HBAR/USDT",
+            "APE/USDT",
+            "AAVE/USDT",
+            "AXS/USDT",
+            "SAND/USDT"
         ],
         "pair_blacklist": [
             ".*UP/USDT",
@@ -90,5 +102,5 @@
     "internals": {
         "process_throttle_secs": 5
     },
-    "strategy": "NASOSv5_mod3"
+    "strategy": "NASOSv4Multi_final"
 }

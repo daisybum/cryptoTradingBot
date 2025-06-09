@@ -24,7 +24,7 @@ class User(Base):
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    last_login = Column(DateTime, nullable=True)
+# DEAD CODE:     last_login = Column(DateTime, nullable=True)
 
 class Trade(Base):
     __tablename__ = "trades"
@@ -55,7 +55,7 @@ class BotStatus(Base):
     mode = Column(String)  # live, paper, backtest
     uptime = Column(Integer)  # seconds
     last_update = Column(DateTime, default=datetime.utcnow)
-    active_trades = Column(Integer, default=0)
+# DEAD CODE:     active_trades = Column(Integer, default=0)
     balance = Column(Float)
     equity = Column(Float)
     strategy = Column(String)
@@ -100,10 +100,10 @@ class UserResponse(UserBase):
     id: int
     is_active: bool
     created_at: datetime
-    last_login: Optional[datetime] = None
+# DEAD CODE:     last_login: Optional[datetime] = None
 
-    class Config:
-        orm_mode = True
+# DEAD CODE:     class Config:
+# DEAD CODE:         orm_mode = True
 
 class TradeBase(BaseModel):
     symbol: str
@@ -140,14 +140,14 @@ class TradeResponse(TradeBase):
     take_profit: Optional[float] = None
     order_id: Optional[str] = None
 
-    class Config:
-        orm_mode = True
+# DEAD CODE:     class Config:
+# DEAD CODE:         orm_mode = True
 
 class BotStatusBase(BaseModel):
     status: str
     mode: str
     uptime: int
-    active_trades: int
+# DEAD CODE:     active_trades: int
     balance: float
     equity: float
     strategy: str
@@ -160,7 +160,7 @@ class BotStatusUpdate(BaseModel):
     status: Optional[str] = None
     mode: Optional[str] = None
     uptime: Optional[int] = None
-    active_trades: Optional[int] = None
+# DEAD CODE:     active_trades: Optional[int] = None
     balance: Optional[float] = None
     equity: Optional[float] = None
 
@@ -168,8 +168,8 @@ class BotStatusResponse(BotStatusBase):
     id: int
     last_update: datetime
 
-    class Config:
-        orm_mode = True
+# DEAD CODE:     class Config:
+# DEAD CODE:         orm_mode = True
 
 class ParameterBase(BaseModel):
     name: str
@@ -189,8 +189,8 @@ class ParameterResponse(ParameterBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        orm_mode = True
+# DEAD CODE:     class Config:
+# DEAD CODE:         orm_mode = True
 
 class BacktestResultBase(BaseModel):
     strategy: str
@@ -211,12 +211,12 @@ class BacktestResultResponse(BacktestResultBase):
     id: int
     created_at: datetime
 
-    class Config:
-        orm_mode = True
+# DEAD CODE:     class Config:
+# DEAD CODE:         orm_mode = True
 
 class Token(BaseModel):
     access_token: str
-    token_type: str
+# DEAD CODE:     token_type: str
 
 class TokenData(BaseModel):
     username: Optional[str] = None

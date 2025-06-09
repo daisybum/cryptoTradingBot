@@ -1,6 +1,6 @@
 # Task ID: 6
 # Title: Database Schema and Storage Implementation
-# Status: pending
+# Status: done
 # Dependencies: 1
 # Priority: medium
 # Description: Set up PostgreSQL and InfluxDB schemas for trade data, performance metrics, and time-series data

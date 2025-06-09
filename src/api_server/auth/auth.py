@@ -55,7 +55,7 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
         return None
     
     # 마지막 로그인 시간 업데이트
-    user.last_login = datetime.utcnow()
+# DEAD CODE:     user.last_login = datetime.utcnow()
     db.commit()
     
     return user

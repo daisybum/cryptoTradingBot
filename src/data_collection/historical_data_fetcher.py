@@ -15,7 +15,7 @@ import ccxt.async_support as ccxt
 import pandas as pd
 import aiohttp
 import aiofiles
-import statistics  # 통계 기능 추가
+# DEAD CODE: import statistics  # 통계 기능 추가
 
 from src.utils.error_handler import RetryWithBackoff, CircuitBreaker, robust_operation
 from src.utils.env_loader import get_env_loader
@@ -69,7 +69,7 @@ class HistoricalDataFetcher:
         
         # 요청 제한 설정
         self.limit = 1000  # 한 번에 가져올 최대 캔들 수
-        self.rate_limit_ms = 1200  # API 요청 간격 (밀리초)
+# DEAD CODE:         self.rate_limit_ms = 1200  # API 요청 간격 (밀리초)
         self.retry_delay = 1000  # 재시도 지연 시간 (밀리초)
         self.api_delay = 1000  # API 요청 간 지연 시간 (밀리초)
         
@@ -179,7 +179,7 @@ class HistoricalDataFetcher:
             logger.error(f"과거 데이터 검색 중 오류 발생: {e}")
             raise
     
-    async def fetch_ohlcv_dataframe(self, symbol: str, timeframe: str, since: Optional[int] = None, limit: int = 1000) -> pd.DataFrame:
+# DEAD CODE:     async def fetch_ohlcv_dataframe(self, symbol: str, timeframe: str, since: Optional[int] = None, limit: int = 1000) -> pd.DataFrame:
         """
         OHLCV 데이터를 DataFrame으로 검색
         
@@ -273,7 +273,7 @@ class HistoricalDataFetcher:
         logger.info(f"완전한 역사 데이터 검색 완료: {symbol} {timeframe} (총 {len(all_data)} 캔들)")
         return all_data
         
-    async def fetch_ohlcv_range(self, symbol: str, timeframe: str, start: int, end: int, limit: int = 1000) -> List:
+# DEAD CODE:     async def fetch_ohlcv_range(self, symbol: str, timeframe: str, start: int, end: int, limit: int = 1000) -> List:
         """
         지정된 시간 범위 내의 OHLCV 데이터를 검색합니다.
         
@@ -348,7 +348,7 @@ class HistoricalDataFetcher:
         logger.info(f"시간 범위 OHLCV 데이터 검색 완료: {symbol} {timeframe} (총 {len(all_data)} 캔들)")
         return all_data
     
-    async def fetch_recent_ohlcv(self, symbol: str, timeframe: str, limit: int = 100) -> List:
+# DEAD CODE:     async def fetch_recent_ohlcv(self, symbol: str, timeframe: str, limit: int = 100) -> List:
         """
         최근 OHLCV 데이터를 검색합니다.
         
